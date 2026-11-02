@@ -1,0 +1,196 @@
+--- raw/index.html
++++ live/index.html
+@@ -51,15 +51,15 @@
+ .note{font-size:12px;color:var(--mut);margin-top:14px}
+ .err{color:var(--dn);font-size:13px}
+ .hide{display:none}
+-.runbar{display:flex;gap:8px;align-items:stretch}
+-#runBtn{flex:1;min-height:54px;font-size:19px;font-weight:700;background:#16a34a;border-color:#16a34a;color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(22,163,74,.35)}
+-#runBtn:disabled{background:#14532d;border-color:#14532d;color:#bbf7d0;cursor:wait;box-shadow:none}
++/* runBtn removed */
++/* */
++/* */
+ #runBtn.attn{animation:pulse 1.4s ease-in-out infinite}
+ @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
+ .spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:rot .8s linear infinite;display:none}
+-#runBtn:disabled .spin{display:inline-block}
++/* */
+ @keyframes rot{to{transform:rotate(360deg)}}
+-.auto{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:13px;color:var(--mut);white-space:nowrap;cursor:pointer;min-height:54px}
++.auto{display:none}
+ .auto input{width:22px;height:22px;min-height:0;accent-color:#16a34a;margin:0}
+ .runinfo{font-size:12px;color:var(--mut);margin-top:-2px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+ .stale{display:none;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.5);color:var(--warn);border-radius:10px;padding:9px 12px;font-size:14px;font-weight:600}
+@@ -100,7 +100,11 @@
+ .cap input{width:130px;text-align:right;font-variant-numeric:tabular-nums}
+ @media(min-width:760px){.pform{grid-template-columns:1.3fr 1fr 1fr 1fr}#ppc{height:280px}#ppx{height:420px}.ctl{grid-template-columns:1.4fr 1fr 1fr 1fr}.runbar,.runinfo,.stale{grid-column:1/-1}.kpis{grid-template-columns:repeat(4,1fr)}#pc{height:440px}#ec{height:260px}}
+ /* ---- Real bot tab ---- */
+-body.onBot .ctl{display:none}
++.rb-tf{display:flex;gap:6px;margin:8px 0}
++.rb-tf button{flex:1;min-height:40px;font-size:14px;font-weight:600}
++.rb-tf button.on{background:var(--acc);border-color:var(--acc);color:#fff}
++
++/* controls moved inside Simulation tab */
+ #tabBot{font-weight:650}
+ .rbtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+ .pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 12px;font-weight:750;font-size:13px;letter-spacing:.04em}
+@@ -124,7 +128,7 @@
+ .cc .m{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.35;overflow-wrap:anywhere}
+ .tagL{background:rgba(34,197,94,.18);color:var(--up);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
+ .tagC{background:rgba(138,147,166,.18);color:var(--mut);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
+-#rbEq{height:220px}#rbPx{height:340px}
++#rbEq{height:200px;max-width:none;aspect-ratio:auto;margin:0}#rbPx{height:340px}
+ #rbEq,#rbPx{width:100%;overflow:hidden}
+ .flt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+ .flt select{flex:1;min-width:0}
+@@ -162,7 +166,7 @@
+ .skp{font-size:12px;padding:5px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+ .ev .k.skip{background:rgba(245,158,11,.16);color:#fbbf24}.ev .k.tpsl{background:rgba(239,68,68,.16);color:#fca5a5}.ev .k.resize{background:rgba(59,130,246,.18);color:#93c5fd}
+ @media(min-width:760px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+-@media(min-width:760px){.ccards{grid-template-columns:repeat(6,minmax(0,1fr))}.cc.wide{grid-column:span 3}#rbEq{height:260px}#rbPx{height:440px}.cinfo{grid-template-columns:repeat(4,minmax(0,1fr))}}
++@media(min-width:760px){.ccards{grid-template-columns:repeat(6,minmax(0,1fr))}.cc.wide{grid-column:span 3}#rbEq{height:220px;max-width:none}#rbPx{height:440px}.cinfo{grid-template-columns:repeat(4,minmax(0,1fr))}}
+ .cc.wide{grid-column:1/-1}
+ .cc.mini{padding:7px 9px;border-radius:10px}.cc.mini .n{font-size:14px}.cc.mini .m{margin-top:2px;font-variant-numeric:tabular-nums}.cc.mini .t.m{display:flex}
+ .cc.exl{opacity:.55}.szp.sig{background:#1e3a8a;color:#bfdbfe}
+@@ -176,15 +180,14 @@
+   <div class="prog" id="prog"></div>
+ </header>
+ <main>
+-  <div class="ctl">
+-    <div class="seg" id="tfSeg"></div>
+-    <div class="seg" id="dirSeg"></div>
+-    <div class="seg" id="exSeg"></div>
+-    <div class="cap"><label for="capIn">Starting capital (USD)</label><input id="capIn" type="number" inputmode="decimal" min="1" step="50" value="500"></div>
+-    <div class="runbar"><button id="runBtn" aria-label="Re-run now (optional, it runs automatically)"><span class="spin"></span><span id="runLab">↻ Re-run</span></button><label class="auto"><input type="checkbox" id="autoIn" checked>Auto-refresh 60s</label></div>
+-    <div class="runinfo"><span id="runInfo">Last run: –</span><span id="runSetup"></span></div>
+-    <div class="stale" id="staleMsg">Settings changed, updating automatically…</div>
+-  </div>
++  
++  <div id="tfSeg" style="display:none"></div>
++  <div id="dirSeg" style="display:none"></div>
++  <div id="exSeg" style="display:none"></div>
++  <input id="capIn" type="number" style="display:none" value="500">
++
++  <div id="runInfo" style="display:none"></div><div id="runSetup" style="display:none"></div><div id="staleMsg" class="stale" style="display:none"></div><input type="checkbox" id="autoIn" checked style="display:none">
++
+   <div class="tabs">
+     <button id="tabBot" class="on">Real Bot</button>
+     <button id="tabPap">Simulation</button>
+@@ -196,16 +199,21 @@
+       <div class="rbdet" id="rbDetail"></div>
+       <div class="rbstale hide" id="rbStale"></div>
+       <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
+-      <div class="meta" style="margin-top:6px">The timeframe and pause/resume are changed by messaging the bot in chat (this public page is read-only).</div>
++      <div class="rb-tf" id="rbTfSeg">
++        <button type="button" data-tf="15m">15m</button>
++        <button type="button" data-tf="1h">1h</button>
++        <button type="button" data-tf="4h">4h</button>
++      </div>
++      <div class="meta" id="rbTfNote">Highlighted = the bot's active timeframe. Tap to change it on GitHub: set tf to 15m, 1h or 4h and commit; the bot switches within ~1 min.</div>
+       <div id="rbErr" class="err"></div>
+     </div>
++    <div class="card" style="text-align:center"><div class="h3">Equity vs buy & hold</div><div class="legend" style="justify-content:center"><span><i class="dot" style="background:#22c55e"></i>Bot</span><span><i class="dot" style="background:#8a93a6"></i>Buy & hold</span></div><div id="rbEq"></div></div>
+     <div class="card">
+       <div class="livebar"><span class="live" id="rbLive"><i></i><span id="rbLiveT">CONNECTING</span></span><span class="meta" id="rbLiveAt">connecting to Binance…</span></div>
+       <div class="phead"><div><div class="meta">Paper balance · live mark</div><div class="big" id="rbBal">–</div><div id="rbPnl" class="meta"></div></div>
+       <div class="cd">Next <span id="rbTf">–</span> bar close<br><b id="rbCd">–</b><div id="rbCdAt"></div></div></div>
+       <div class="kpis" id="rbKpis" style="margin-top:10px"></div><div class="meta" id="rbAsOf" style="margin-top:8px"></div>
+     </div>
+-    <div class="card"><div class="h3">Equity vs buy &amp; hold</div><div class="legend"><span><i class="dot" style="background:#22c55e"></i>Bot equity (USD)</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold same coins</span></div><div id="rbEq"></div></div>
+     <div class="rbpend hide" id="rbPend"></div>
+     <div class="card hide" id="rbPoolC"><div class="h3">Pool <span class="meta" id="rbPoolH"></span></div><div class="slots" id="rbSlots"></div><div class="meta" id="rbPoolN" style="margin-top:6px"></div><div class="h3" style="margin-top:10px;font-size:14px">Skipped arrows <span class="meta">· slots full, not queued</span></div><div id="rbSkip"></div></div>
+     <div class="card"><div class="h3">Coins <span class="meta">· live prices · positions as of <span class="asof">–</span> · tap a coin for its chart</span></div><div class="ccards" id="rbCards"></div></div>
+@@ -249,6 +257,7 @@
+   </section>
+ 
+   <section id="vPap" class="hide">
++
+     <div class="sim"><b>BROWSER SIMULATION: this is NOT the 24/7 paper bot's actual trades or balance.</b> This page runs its own paper simulation in your browser, recomputed on every page load from the start time below using Binance public price history, so its numbers can differ from the bot's (the bot switched rules and timeframes during its run; this page applies one rule from the start). No exchange keys are used and no orders are placed anywhere. Default: <b>Exit Arrows, long-only</b>, $500 split across ZEC, NEAR, PEPE, SOL, XRP; BUY at the next bar open after a ▲ up arrow (close crosses above the Exit SSL HMA15), sell to cash after a ▼ down arrow. Indicator = Mihkel00 SSL Hybrid, TradingView Pine v6 (WMA ATR smoothing), identical to the bot's ssl_core.py. Fees 0.1% per side.</div>
+     <div class="card">
+       <div class="pform">
+@@ -388,6 +397,8 @@
+    It also recomputes the Exit Arrows on bars that closed after the export (same Pine v6 indicator() as the simulation)
+    and shows a "pending" hint only; it never simulates trades into the bot's balance. */
+ window.RB = (function () {
++  // highlight the bot's active timeframe (bot.json "tf") on the Real Bot 15m/1h/4h buttons
++  function tfMark() { document.querySelectorAll("#rbTfSeg button").forEach(b => b.classList.toggle("on", !!D && b.dataset.tf === D.tf)); }
+   const $ = id => document.getElementById(id);
+   const STALE_MIN = 25, TFMS = { "15m": 9e5, "1h": 36e5, "4h": 144e5 }, PRICE_MS = 5000;
+   const PX_SRC = [["api.binance.com", "https://api.binance.com/api/v3"], ["data-api.binance.vision", "https://data-api.binance.vision/api/v3"]];
+@@ -520,14 +531,17 @@
+     let det = st === "RUNNING" ? "Bot alive" + (num(D.hb_age_s) ? `, heartbeat ${Math.round(D.hb_age_s)} s before the export` : "") : (D.status_detail || "");
+     if (D.paused) det = `Paused since ${D.paused.since_wib} WIB: ${D.paused.reason}. No new entries; exits still follow the rules.`;
+     $("rbDetail").textContent = det + (D.heartbeat_wib ? ` (last heartbeat ${D.heartbeat_wib.slice(11, 19)} WIB)` : "");
+-    $("rbExp").textContent = wib(D.exported_ms); $("rbAgo").textContent = `(${ageMin < 1 ? "<1" : Math.round(ageMin)} min ago)`;
++    $("rbExp").textContent = wib(D.exported_ms);
++
++    document.querySelectorAll("#rbTfSeg button").forEach(b => b.classList.toggle("on", b.dataset.tf === D.tf));
++ $("rbAgo").textContent = `(${ageMin < 1 ? "<1" : Math.round(ageMin)} min ago)`;
+     document.querySelectorAll("#vBot .asof").forEach(e => e.textContent = WIBH.format(new Date(D.positions_as_of_ms || D.exported_ms)));
+     const tb = TFMS[D.tf] || 9e5, now = Date.now(), nx = Math.ceil((now + 1) / tb) * tb, s = Math.round((nx - now) / 1000);
+     $("rbTf").textContent = D.tf; $("rbCd").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; $("rbCdAt").textContent = "at " + WIBH.format(new Date(nx)) + " WIB";
+     if (onBot()) { $("upd").textContent = "Real bot · exported " + wib(D.exported_ms) + " WIB"; $("src").textContent = V && V.live ? "· live P&L" : ""; }
+     liveBadge();
+   }
+-  function render() { header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) coin = D.coins[0] && D.coins[0].coin; coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
++  function render() { tfMark(); header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) coin = D.coins[0] && D.coins[0].coin; coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
+ 
+   function numbers() {
+     $("rbBal").textContent = usd(V.balance); $("rbBal").classList.remove("flash"); void $("rbBal").offsetWidth; if (V.live) $("rbBal").classList.add("flash");
+@@ -1170,22 +1184,22 @@
+ function isStale() { return S.tab === "bot" ? false : S.tab === "pap" ? papKey(P) !== papKey(PR) : SETKEYS.some(k => S[k] !== R[k]); }
+ var autoT = null;
+ function autoRun(ms) { clearTimeout(autoT); autoT = setTimeout(() => { if (S.tab !== "bot" && isStale()) runNow(); }, ms || 450); }   // any settings change re-runs by itself
+-function markStale() { if (S.tab !== "bot" && isStale()) autoRun(); document.body.classList.toggle("isStale", isStale()); $("runBtn").classList.toggle("attn", isStale()); $("runSetup").textContent = "Showing: " + (S.tab === "pap" ? papText(PR) : setupText(R)); }
++function markStale() { if (S.tab !== "bot" && isStale()) autoRun(); document.body.classList.toggle("isStale", isStale()); /* runBtn removed */ $("runSetup").textContent = "Showing: " + (S.tab === "pap" ? papText(PR) : setupText(R)); }
+ function runProgress() {
+   if (!running) return;
+-  if (runTab === "pap") { $("runLab").textContent = papRun.total ? `Running… ${papRun.n}/${papRun.total} coins` : "Running…"; return; }
++  if (runTab === "pap") { /* */ return; }
+   const det = runTab === "det";
+-  $("runLab").textContent = det ? (detRun.total ? `Running… ${detRun.n}/${detRun.total} batches` : "Running…") : `Running… ${sigRun.n}/${sigRun.total} coins`;
++  /* */
+ }
+ function work(mode) {   // mode: "run" (button / first load) or "auto" (60 s refresh)
+   const p = (async () => {
+-    runMode = mode; runTab = S.tab; $("runBtn").disabled = true; $("refresh").disabled = true; runProgress();
++    runMode = mode; runTab = S.tab; /* */ $("refresh").disabled = true; runProgress();
+     try {
+       if (runTab === "pap") await loadPaper();
+       else if (runTab === "det") await loadDetail(mode === "run" ? true : !pChart);
+       else await loadSignals();
+       if (mode === "run") $("runInfo").textContent = "Last run: " + WIB.format(new Date()) + " WIB";
+-    } finally { running = null; $("runBtn").disabled = false; $("refresh").disabled = false; $("runLab").textContent = "↻ Re-run"; markStale(); }
++    } finally { running = null; /* */ $("refresh").disabled = false; /* */ markStale(); }
+   })();
+   running = p; return p;
+ }
+@@ -1207,10 +1221,27 @@
+   if (S.tab === "pap") { if (papRun.key !== papKey(PR)) work("run"); return; }
+   if ((S.tab === "det" ? detRun.key : sigRun.key) !== k) work("run");
+ }
+-$("runBtn").onclick = () => runNow();
++/* runBtn removed */
+ $("autoIn").checked = !!S.auto;
+ $("autoIn").onchange = () => { S.auto = $("autoIn").checked; save(); };
+ S.auto = true; save();   // auto-refresh is always on at page load
++
++// Real Bot TF selector: the page is static and holds no tokens, so a tap opens control/tf.json in GitHub's editor.
++// Commit {"tf":"1h",...} there; the box polls that file every ~60 s and switches the paper bot live.
++const TF_EDIT_URL = "https://github.com/dedkovic441-hub/ssl-hybrid-dashboard/edit/main/control/tf.json";
++document.querySelectorAll("#rbTfSeg button").forEach(btn => {
++  btn.onclick = () => {
++    const tf = btn.dataset.tf;
++    if (!["15m", "1h", "4h"].includes(tf)) return;
++    const note = document.getElementById("rbTfNote");
++    if (note) {
++      note.textContent = (btn.classList.contains("on") ? tf + " is already active. " : "Requested " + tf + ": ") + "Set tf to 15m, 1h or 4h and commit; the bot switches within ~1 min.";
++      note.setAttribute("role", "status"); note.setAttribute("aria-live", "polite");
++    }
++    window.open(TF_EDIT_URL, "_blank", "noopener");
++  };
++});
++
+ selectCoin(S.coin); setTab(S.tab, false); markStale();
+ if (S.tab === "bot") RB.show(); else runNow();   // first load: run with the saved (or default) settings so the page is never empty
+ setInterval(() => { if (S.auto && !document.hidden) refreshAll(); }, 60000);

@@ -1,0 +1,68 @@
+/* ---- Real bot tab ---- */
+body.onBot .ctl{display:none}
+#tabBot{font-weight:650}
+.rbtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 12px;font-weight:750;font-size:13px;letter-spacing:.04em}
+.pill i{width:9px;height:9px;border-radius:50%;background:currentColor;display:inline-block}
+.pill.run{background:rgba(34,197,94,.16);color:#22c55e;border:1px solid rgba(34,197,94,.5)}
+.pill.run i{animation:blink 1.2s ease-in-out infinite}
+.pill.pau{background:rgba(245,158,11,.16);color:#f59e0b;border:1px solid rgba(245,158,11,.55)}
+.pill.stp{background:rgba(239,68,68,.16);color:#ef4444;border:1px solid rgba(239,68,68,.55)}
+.pill.stale{background:rgba(245,158,11,.2);color:#fbbf24;border:1px solid #f59e0b}
+#vBot .hide,.pill.hide{display:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.rbstale{background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.55);color:#fbbf24;border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:600;margin-top:8px}
+.rbinfo{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.35);border-radius:10px;padding:8px 12px;font-size:12.5px;margin-top:8px}
+.rbdet{font-size:12.5px;color:var(--mut);margin-top:6px;overflow-wrap:anywhere}
+.ccards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.cc{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;min-width:0;text-align:left;min-height:0;display:block;width:100%}
+.cc.sel{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.cc .t{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.cc .n{font-weight:750;font-size:16px}
+.cc .px{font-variant-numeric:tabular-nums;font-size:15px;margin-top:2px}
+.cc .m{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.35;overflow-wrap:anywhere}
+.tagL{background:rgba(34,197,94,.18);color:var(--up);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
+.tagC{background:rgba(138,147,166,.18);color:var(--mut);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
+#rbEq{height:220px}#rbPx{height:340px}
+#rbEq,#rbPx{width:100%;overflow:hidden}
+.flt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.flt select{flex:1;min-width:0}
+.flt .pseg{flex:1.4;min-width:0}
+.ev{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px;min-width:0}
+.ev .w{color:var(--mut);font-size:11.5px;white-space:nowrap;font-variant-numeric:tabular-nums;min-width:74px}
+.ev .k{font-size:10.5px;font-weight:700;border-radius:6px;padding:1px 6px;background:var(--card2);color:var(--mut);white-space:nowrap;align-self:flex-start}
+.ev .k.fill{background:rgba(253,224,71,.16);color:#fde047}.ev .k.start,.ev .k.stop{background:rgba(59,130,246,.18);color:#93c5fd}
+.ev .x{min-width:0;overflow-wrap:anywhere}
+.togs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.togs label{display:flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:0 8px;min-height:34px;font-size:12.5px;cursor:pointer}
+.togs input{width:16px;height:16px;min-height:0;margin:0}
+.cinfo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+.cinfo div{background:var(--card2);border-radius:8px;padding:6px 8px;font-size:12px;color:var(--mut);min-width:0}
+.cinfo b{display:block;color:var(--tx);font-size:14px;font-variant-numeric:tabular-nums}
+
+.livebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.06em;color:#22c55e;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.45);border-radius:999px;padding:3px 9px}
+.live i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.live.tick i{animation:ping .9s ease-out}
+.live.off{color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.5)}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(34,197,94,.9)}100%{box-shadow:0 0 0 9px rgba(34,197,94,0)}}
+.flash{animation:fl .8s ease-out}
+@keyframes fl{0%{background:rgba(59,130,246,.35)}100%{background:transparent}}
+.rbpend{background:rgba(253,224,71,.1);border:1px solid rgba(253,224,71,.55);color:#fde047;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-bottom:10px}
+.cc .pd{margin-top:5px;font-size:11.5px;font-weight:700;color:#fde047}
+.cc .pd.hit,.rbhit{color:#fca5a5}
+.szp{display:inline-block;background:rgba(59,130,246,.16);color:#93c5fd;border:1px solid rgba(59,130,246,.45);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700}
+.slots{display:grid;grid-template-columns:1fr;gap:8px}
+.slot{background:var(--card2);border-radius:10px;padding:9px 10px;font-size:12.5px;min-width:0;overflow-wrap:anywhere;line-height:1.45}
+.slot.free{border:1px dashed var(--line);color:var(--mut)}
+.slot b{font-variant-numeric:tabular-nums}
+.rs{display:inline-block;font-size:9.5px;font-weight:800;padding:0 5px;border-radius:5px;background:#334155;color:#e2e8f0;margin-left:3px}
+.rs.TP{background:#14532d;color:#bbf7d0}.rs.SL{background:#7f1d1d;color:#fecaca}.rs.SWITCH{background:#1e3a8a;color:#bfdbfe}
+.skp{font-size:12px;padding:5px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.ev .k.skip{background:rgba(245,158,11,.16);color:#fbbf24}.ev .k.tpsl{background:rgba(239,68,68,.16);color:#fca5a5}.ev .k.resize{background:rgba(59,130,246,.18);color:#93c5fd}
+@media(min-width:760px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:760px){.ccards{grid-template-columns:repeat(6,minmax(0,1fr))}.cc.wide{grid-column:span 3}#rbEq{height:260px}#rbPx{height:440px}.cinfo{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.cc.wide{grid-column:1/-1}
+.cc.mini{padding:7px 9px;border-radius:10px}.cc.mini .n{font-size:14px}.cc.mini .m{margin-top:2px;font-variant-numeric:tabular-nums}.cc.mini .t.m{display:flex}
+.cc.exl{opacity:.55}.szp.sig{background:#1e3a8a;color:#bfdbfe}
+.rs.ARROW_INTRABAR{background:rgba(0,195,255,.18);color:#7dd3fc}.rs.ARROW_CLOSE{background:rgba(138,147,166,.18)}

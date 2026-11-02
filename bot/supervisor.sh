@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Watchdog: keeps paper_bot.py, server.py and publish_loop.sh (GitHub Pages bot.json pusher) alive; checks every 10 s. Started detached by start.sh.
+# Watchdog: keeps paper_bot.py, server.py, publish_loop.sh (GitHub Pages bot.json pusher) and tf_poller.py (control/tf.json -> run/tf_request.json) alive; checks every 10 s. Started detached by start.sh.
 cd "$(dirname "$0")"; D=$PWD; R=$D/run; mkdir -p "$R"
 echo $$ > "$R/supervisor.pid"
 PORT=${PORT:-8811}
@@ -9,6 +9,7 @@ alive() { [ -f "$1" ] && kill -0 "$(cat "$1")" 2>/dev/null; }
 log() { echo "$(TZ=Asia/Jakarta date '+%F %T') WIB [supervisor] $*" >> "$D/supervisor.log"; }
 start_bot() { setsid nohup "$PYTHON" -u "$D/paper_bot.py" >> "$D/bot.stdout.log" 2>&1 < /dev/null & echo $! > "$R/bot.pid"; log "started bot pid $(cat "$R/bot.pid")"; }
 start_pub() { setsid nohup bash "$D/publish_loop.sh" >> "$D/publish.log" 2>&1 < /dev/null & echo $! > "$R/publisher.pid"; log "started publisher pid $(cat "$R/publisher.pid") (bot.json -> GitHub Pages every 10 min)"; }
+start_tfp() { setsid nohup "$PYTHON" -u "$D/tf_poller.py" >> "$D/tf_poller.stdout.log" 2>&1 < /dev/null & echo $! > "$R/tf_poller.pid"; log "started tf_poller pid $(cat "$R/tf_poller.pid") (GitHub control/tf.json -> run/tf_request.json every 60 s)"; }
 start_srv() { PORT=$PORT setsid nohup "$PYTHON" -u "$D/server.py" >> "$D/server.log" 2>&1 < /dev/null & echo $! > "$R/server.pid"; log "started server pid $(cat "$R/server.pid") on 127.0.0.1:$PORT"; }
 trap 'log "supervisor stopping"; rm -f "$R/supervisor.pid"; exit 0' TERM INT
 log "supervisor up pid $$"
@@ -18,6 +19,11 @@ while true; do
   else alive "$R/bot.pid" || { [ -f "$R/bot.pid" ] && log "bot not running (crash?), restarting"; start_bot; }; fi
   # the publisher keeps running even after a user stop, so the public page shows STOPPED; PUBLISH_DISABLED file turns it off
   [ -f "$R/PUBLISH_DISABLED" ] || alive "$R/publisher.pid" || { [ -f "$R/publisher.pid" ] && log "publisher not running, restarting"; start_pub; }
+  # timeframe poller (phone switch via control/tf.json); TF_POLLER_DISABLED file turns it off; a stale heartbeat (>10 min) restarts it
+  [ -f "$R/TF_POLLER_DISABLED" ] || alive "$R/tf_poller.pid" || { [ -f "$R/tf_poller.pid" ] && log "tf_poller not running, restarting"; start_tfp; }
+  if alive "$R/tf_poller.pid" && [ -f "$R/tf_poller.hb" ] && [ $(( $(date +%s) - $(stat -c %Y "$R/tf_poller.hb") )) -gt 600 ]; then
+    log "tf_poller heartbeat stale (>600 s), restarting"; kill "$(cat "$R/tf_poller.pid")" 2>/dev/null; sleep 2; kill -9 "$(cat "$R/tf_poller.pid")" 2>/dev/null; start_tfp
+  fi
   alive "$R/server.pid" || { [ -f "$R/server.pid" ] && log "server not running, restarting"; start_srv; }
   # a hung bot (no heartbeat for 5 min) is restarted too
   if [ ! -f "$R/STOPPED_BY_USER" ] && [ -f "$D/live.json" ] && [ $(( $(date +%s) - $(stat -c %Y "$D/live.json") )) -gt 300 ] && alive "$R/bot.pid"; then

@@ -139,3 +139,23 @@ chmod 600 bot/.env
 printf '\nCopy this token into the dashboard: %s\n' "$TOKEN"
 ```
 The dashboard token is only for local API access; it is not a Binance API key. This project remains paper-trading only.
+7) Phone timeframe switch, auto-start, two-tab Pages dashboard (2026-11-03)
+   Timeframe from the phone: edit control/tf.json in the ssl-hybrid-dashboard repo (main),
+   {"tf":"15m|1h|4h","requested_at":"<any new value, e.g. an ISO time>"}, and commit.
+   bot/tf_poller.py (kept alive by supervisor.sh: run/tf_poller.pid, heartbeat run/tf_poller.hb,
+   log tf_poller.log) reads it every ~60 s via `gh api .../contents/control/tf.json` (no CDN
+   cache; raw.githubusercontent.com with a cache-buster as fallback) and writes
+   run/tf_request.json {"tf":..,"at_ms":now} only if tf is valid, differs from summary.json
+   active_tf, and requested_at differs from the last applied one (run/tf_poller_state.json;
+   on first start the current value is recorded as applied, so a stale file never switches).
+   The live engine's main loop calls Bot.check_tf() every 0.5 s -> LiveBot.do_switch, so the
+   switch applies without a restart. Test: tf_poller.py --dir /tmp/x --once --file ctl.json [--dry-run].
+   publish_loop.sh only ever commits bot.json and now pulls --rebase before each cycle, so it
+   never touches control/tf.json.
+   Auto-start: cron_ensure.sh (runs start.sh unless run/STOPPED_BY_USER exists) from the user
+   crontab: "@reboot sleep 60 && cron_ensure.sh --boot" and "*/5 * * * * cron_ensure.sh".
+   The box has no init system (PID 1 is tini), so cron itself must be started (sudo /usr/sbin/cron).
+   Dashboard: only "Real Bot" (default) and "Simulation" (#pap) tabs. The Real Bot 15m/1h/4h
+   buttons highlight bot.json "tf" and open control/tf.json in GitHub's editor (no tokens in
+   the page). dashboard/web/build_index.py regenerates dashboard/index.html exactly
+   (template + pages_live.patch for the edits made on GitHub).
