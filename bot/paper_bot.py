@@ -277,7 +277,9 @@ def readout(df, ind, coin):
     li, ld, lt = last_signal(ind, df.t.values)
     color = int(ind["color"][-1])
     ai, ad, at = last_arrow(ind, df.t.values); L = lambda k: float(ind[k][-1])
-    return {"coin": coin, "close": c, "bar_t": int(df.t.values[-1]), "base": base, "upper": up, "lower": lo, "exit_line": ex,
+    r_arr = ind.get("rsi")
+    r_val = float(r_arr[-1]) if r_arr is not None and len(r_arr) and math.isfinite(r_arr[-1]) else None
+    return {"coin": coin, "close": c, "bar_t": int(df.t.values[-1]), "base": base, "upper": up, "lower": lo, "exit_line": ex, "rsi": r_val,
             "ssl1": L("ssl1_line"), "ssl1_state": int(ind["ssl1"][-1]), "ssl2": L("ssl2_line"), "ssl2_state": int(ind["ssl2"][-1]),
             "atr_up": L("atr_up"), "atr_lo": L("atr_lo"), "diamond": bool(ind["diamond"][-1]),
             "ssl2_cont": "buy" if ind["buy_atr"][-1] else ("sell" if ind["sell_atr"][-1] else None),
@@ -448,9 +450,18 @@ def pool_index(segs):
         if g.get("sizing") == "pool": return k
     return None
 
-def tpsl_levels(units, cost, tp, sl):
+def tpsl_levels(units, cost, tp, sl, side="long"):
+    """Price levels where net P&L after the 0.1% exit fee is +tp / −sl. Long: TP above, SL below.
+    Short (1x paper futures, value = 2*collateral − units*price): TP below, SL above."""
     k = units * (1 - FEE)
     if k <= 0: return None, None
+    if (side or "long") == "short":
+        coll = cost * (1 - FEE)
+        tp_px = (2 * coll * (1 - FEE) - cost - tp) / k if tp else None
+        sl_px = (2 * coll * (1 - FEE) - cost + sl) / k if sl else None
+        if tp_px is not None and tp_px <= 0: tp_px = None
+        if sl_px is not None and sl_px <= 0: sl_px = None
+        return tp_px, sl_px
     return ((cost + tp) / k if tp else None), ((cost - sl) / k if sl and cost > sl else None)
 
 def strength_at(df, ind, i):
@@ -960,13 +971,27 @@ class Bot:
         st = self.state; bal = float((st.get("pool") or {}).get("cash") or 0.0); bh = 0.0; coins = {}
         for c in st["coins"]:
             px = self.live.get(c["coin"]); p = c["pos"]
-            if p and px: val = p["units"] * px if p.get("side", "long") == "long" else core.cash_short_val(p["collateral"], p["units"], px)
+            if p and px:
+                if p.get("side", "long") == "short":
+                    coll = p.get("collateral") if p.get("collateral") is not None else p["units"] * p["entry_px"]
+                    val = core.cash_short_val(coll, p["units"], px)
+                else:
+                    val = p["units"] * px
             else: val = c["value_close"]
             bhv = (c["alloc"] * px / c["bh_c0"]) if (px and c.get("bh_c0")) else c["bh_value_close"]
             coins[c["coin"]] = {"price": px, "value": val, "bh_value": bhv, "unreal": (val - p["cost"]) if p else None, "unreal_pct": (val / p["cost"] - 1) if p else None}
             if p and p.get("units"):
-                pr = px or p.get("close_px"); coins[c["coin"]].update(net_pnl=p["units"] * pr * (1 - FEE) - p["cost"], tp_px=p.get("tp_px"), sl_px=p.get("sl_px"),
-                    to_tp_pct=(p["tp_px"] / pr - 1) if p.get("tp_px") and pr else None, to_sl_pct=(p["sl_px"] / pr - 1) if p.get("sl_px") and pr else None)
+                pr = px or p.get("close_px"); side = p.get("side", "long")
+                if side == "short":
+                    coll = p.get("collateral") if p.get("collateral") is not None else p["units"] * p["entry_px"]
+                    net = core.cash_short_val(coll, p["units"], pr) * (1 - FEE) - p["cost"] if pr else None
+                    hit_sl = bool(p.get("sl_px") and pr and pr >= p["sl_px"]); hit_tp = bool(p.get("tp_px") and pr and pr <= p["tp_px"])
+                else:
+                    net = p["units"] * pr * (1 - FEE) - p["cost"] if pr else None
+                    hit_sl = bool(p.get("sl_px") and pr and pr <= p["sl_px"]); hit_tp = bool(p.get("tp_px") and pr and pr >= p["tp_px"])
+                coins[c["coin"]].update(net_pnl=net, tp_px=p.get("tp_px"), sl_px=p.get("sl_px"), side=side,
+                    to_tp_pct=(p["tp_px"] / pr - 1) if p.get("tp_px") and pr else None, to_sl_pct=(p["sl_px"] / pr - 1) if p.get("sl_px") and pr else None,
+                    hit="SL" if hit_sl else ("TP" if hit_tp else None))
             bal += val; bh += bhv
         return bal, bh, coins
 
@@ -1056,6 +1081,9 @@ def main():
     a = ap.parse_args()
     try: cfg = json.load(open(os.path.join(a.dir, "config.json")))
     except Exception: cfg = {}
+    # run start / capital: config.json "start_wib" / "capital" override the built-in defaults unless --start / --capital are given
+    if "--start" not in sys.argv and cfg.get("start_wib"): a.start = cfg["start_wib"]
+    if "--capital" not in sys.argv and cfg.get("capital"): a.capital = float(cfg["capital"])
     if not a.mode: a.mode = cfg.get("mode") or DEFAULT_MODE
     if a.mode not in MODES: a.mode = DEFAULT_MODE
     os.makedirs(a.dir, exist_ok=True)

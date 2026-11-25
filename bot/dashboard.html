@@ -25,6 +25,13 @@ main{padding:10px 12px 40px}
 .rs{display:inline-block;font-size:10px;font-weight:700;padding:1px 5px;border-radius:5px;background:#334155;color:#e2e8f0}.rs.TP{background:#14532d;color:#bbf7d0}.rs.SL{background:#7f1d1d;color:#fecaca}.rs.SWITCH{background:#1e3a8a;color:#bfdbfe}
 .skl{font-size:12px;margin-top:8px}.skl div{padding:3px 0;border-top:1px solid var(--line)}
 @media(min-width:700px){.slots{grid-template-columns:repeat(2,1fr)}}
+.pool-head{cursor:pointer;user-select:none;-webkit-tap-highlight-color:rgba(59,130,246,.25)}
+.pool-chevron{display:inline-block;width:1em;color:var(--mut);font-weight:700}
+#poolC.collapsed #poolB{display:none}
+#poolC.collapsed #poolH{display:none}
+#poolC:not(.collapsed) #poolSum{display:none}
+#poolC.collapsed .h{margin-bottom:0}
+
 .pos{color:var(--up)}.neg{color:var(--dn)}.mut{color:var(--mut)}
 .sim{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.45);border-radius:10px;padding:9px 12px;font-size:13px;margin-bottom:10px}
 .alert{display:none;background:rgba(245,158,11,.15);border:1px solid var(--warn);color:var(--warn);border-radius:10px;padding:9px 12px;font-weight:650;margin-bottom:10px}
@@ -72,6 +79,11 @@ tr.fresh td{background:rgba(245,158,11,.1)}
 .sdet{font-size:12.5px;color:var(--tx)}.sdet.PAUSED{color:#fcd34d}.sdet.STOPPED{color:#fca5a5}
 .pbtn{font:inherit;font-weight:700;border-radius:10px;min-height:36px;padding:0 14px;cursor:pointer;border:1px solid}
 #pauseB{background:#78350f;border-color:#b45309;color:#fde68a}#resumeB{background:#14532d;border-color:#16a34a;color:#bbf7d0}
+#resetB{background:#7f1d1d;border-color:#ef4444;color:#fecaca}
+.resetrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.resetrow label{font-size:12px;color:#fca5a5;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.resetrow input{font:inherit;font-weight:700;font-size:15px;width:110px;min-height:36px;padding:0 10px;border-radius:10px;border:1px solid #7f1d1d;background:#0f172a;color:#fecaca}
+#resetMsg{font-size:12.5px;color:#fca5a5}
 .offline{display:none;position:sticky;top:0;z-index:9;background:#7f1d1d;color:#fff;font-weight:800;text-align:center;padding:10px;border-bottom:2px solid #ef4444}
 body.isOff .offline{display:block}body.isOff main{opacity:.5}
 .tfseg{display:inline-flex;align-items:center;gap:0;border:1px solid #3b82f6;border-radius:12px;overflow:hidden;background:#0f172a}
@@ -86,10 +98,18 @@ body.isOff .offline{display:block}body.isOff main{opacity:.5}
 <body>
 <div class="offline" id="offB">● DASHBOARD OFFLINE: connection to the bot server lost. Retrying every 7 s…</div>
 <header><div class="wrap">
-  <h1>SSL Hybrid <span class="tfN">15m</span> bot <span class="paper">PAPER · SIMULATION</span> <span class="paper mode" id="modeB" style="background:#14532d;color:#bbf7d0">mode …</span> <span class="paper sigb" id="sigB">Signals: …</span></h1>
+  <h1>SSL Hybrid <span class="tfN">15m</span> bot <span class="paper">PAPER · SIMULATION</span> <span class="paper mode" id="modeB" style="background:#14532d;color:#bbf7d0">mode …</span> <span class="paper sigb" id="sigB">Signals: …</span> <span class="paper sigb" id="rsiB">RSI(14): …</span></h1>
   <div class="srow"><span class="spill" id="sPill"><span class="d"></span><span id="sTxt">…</span></span><span class="sdet" id="sDet"></span>
     <span class="tfseg" id="tfSeg" title="Active trading timeframe: click to switch immediately"><span class="tl">Timeframe</span><button data-tf="15m">15m</button><button data-tf="1h">1h</button><button data-tf="4h">4h</button></span><span class="sdet" id="tfMsg"></span>
+    <span class="tfseg" id="fltSeg" title="Entry filter: when ON, a new long needs +2% over 24h; a new short needs −2% over 24h"><span class="tl">Filter +2%/24h</span><button data-filter="off">OFF</button><button data-filter="on">ON</button></span><span class="sdet" id="fltMsg"></span>
+    <span class="tfseg" id="sidesSeg" title="Long-only or Long+Short (1x paper futures)"><span class="tl">Sides</span><button data-sides="long">Long-only</button><button data-sides="ls">Long+Short</button></span><span class="sdet" id="sidesMsg"></span>
     <button class="pbtn" id="pauseB" style="display:none">❚❚ Pause entries</button><button class="pbtn" id="resumeB" style="display:none">▶ Resume</button></div>
+  <div class="resetrow">
+    <label for="resetCap">Reset paper bot · starting balance (USD)</label>
+    <input id="resetCap" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="e.g. 1000" value="500">
+    <button class="pbtn" type="button" id="resetB">Reset</button>
+    <span class="sdet" id="resetMsg">Archives the current paper run and starts a new one with this starting balance. Open positions are not carried over.</span>
+  </div>
   <div class="st">
     <span><i class="dot" id="sDot"></i><b id="sRun">…</b> <span id="sHb"></span></span>
     <span>uptime <b id="sUp">–</b></span>
@@ -103,7 +123,7 @@ body.isOff .offline{display:block}body.isOff main{opacity:.5}
   <div class="sim"><b>Paper trading simulation.</b> No real orders, no exchange keys; prices from Binance's public API. Mode <b id="modeT">…</b>. Rules: SSL Hybrid (TradingView v6 default settings) on the <b class="tfN">15m</b> timeframe; the trigger depends on the mode (below). Baseline state (active timeframe, switchable 15m/1h/4h in the header; a switch syncs each coin to the new timeframe's state at once at the live price: bull &amp; flat → BUY, bear &amp; long → SELL, balance carries over): <b>bull</b> = close above the upper channel, <b>bear</b> = close below the lower channel, inside the channel (grey) keeps the previous state. <span id="modeR"></span> Paused: no new positions (entries/re-entries blocked), but closing on an opposite signal still happens. <span id="sigR">Decisions on bar close, filled at the next bar's open.</span> 0.1% fee per side, full compounding, $500 start capital from <span id="startT">2026-10-27 07:52</span> WIB (ZEC, NEAR, PEPE, SOL, XRP until 19:45 WIB; then the low-cap universe below, balance carried over). <b>Warning:</b> the 1-year historical 15m backtest of these signals lost on all 30 coins tested (median −97% long-only crossover), mostly from fees on ~1,500 trades per coin. Earlier mode history is archived in <code>archive/</code>.</div>
   <div class="alert" id="alert"></div>
   <div class="card"><div class="kpis" id="kpis"></div></div>
-  <div class="card" id="poolC" style="display:none"><div class="h">Pool <small id="poolH"></small></div><div id="poolB"></div></div>
+  <div class="card" id="poolC" style="display:none"><div class="h pool-head" id="poolHead" role="button" tabindex="0" aria-expanded="true" aria-controls="poolB"><span><span class="pool-chevron" id="poolChev" aria-hidden="true">▾</span> Pool <small id="poolSum"></small></span><small id="poolH"></small></div><div id="poolB"></div></div>
   <div class="card"><div class="h">Portfolio equity vs buy &amp; hold <small>USD, at each bar close of the active timeframe + switches + live mark</small></div>
     <div class="legend"><span><i class="ln" style="background:#22c55e"></i>Paper bot</span><span><i class="ln" style="background:#8a93a6"></i>Buy &amp; hold (same coins, same start)</span></div><div id="eqc"></div></div>
   <div class="card"><div class="h">Coins <small id="uniH"></small></div><div class="uni" id="uni"></div><div class="coins" id="coins"></div></div>
@@ -148,17 +168,45 @@ new ResizeObserver(()=>{eqChart.applyOptions({width:$("eqc").clientWidth});cChar
 async function J(u){ const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 6000); let r; try { r = await fetch(u,{cache:"no-store",signal:ctl.signal}); } finally { clearTimeout(to); } if(!r.ok) throw new Error(u+" "+r.status); return r.json(); }
 
 let PL = null;
+const POOL_LS = "sslHybrid.poolCollapsed";
+function applyPoolCollapse() {
+  const card = $("poolC"), head = $("poolHead"), chev = $("poolChev");
+  if (!card) return;
+  const collapsed = localStorage.getItem(POOL_LS) === "1";
+  card.classList.toggle("collapsed", collapsed);
+  if (chev) chev.textContent = collapsed ? "▸" : "▾";
+  if (head) head.setAttribute("aria-expanded", collapsed ? "false" : "true");
+}
+function bindPoolToggle() {
+  const head = $("poolHead");
+  if (!head || head.dataset.bound) return;
+  head.dataset.bound = "1";
+  const tog = ev => {
+    ev.preventDefault();
+    localStorage.setItem(POOL_LS, localStorage.getItem(POOL_LS) === "1" ? "0" : "1");
+    applyPoolCollapse();
+  };
+  head.addEventListener("click", tog);
+  head.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") tog(ev); });
+}
 function pool(){
   PL = ST.pool || null; $("poolC").style.display = PL ? "" : "none"; if (!PL) return;
+  bindPoolToggle();
   const lc = (LIVE && LIVE.coins) || {};
   $("poolH").textContent = `· Max positions ${PL.max_positions} · pool sizing · ${PL.slots_used}/${PL.max_positions} slots used`;
+  const pnl = PL.slots.reduce((a,s) => { const np = (lc[s.coin] || {}).net_pnl; return a + (np != null && isFinite(np) ? np : 0); }, 0);
+  $("poolSum").innerHTML = `${PL.slots_used}/${PL.max_positions} slots` + (PL.slots.length ? ` · P&amp;L <b class="${cls(pnl)}">${sgn(pnl)}</b>` : "");
+  applyPoolCollapse();
   const sl = PL.slots.map(s => { const L = lc[s.coin] || {}, c = ST.coins.find(x=>x.coin===s.coin) || {}, pr = L.price ?? (c.pos||{}).close_px, val = L.value ?? s.value_close, np = L.net_pnl;
-    return `<div class="slot"><b>${s.coin}</b> LONG · size ${usd(s.cost)} · now ${usd(val)} · net if sold <b class="${cls(np)}">${sgn(np)}</b><br>entry ${px(s.entry_px)} · price ${px(pr)}<br>
+    const sd = (s.side || (c.pos||{}).side || "long").toUpperCase();
+    return `<div class="slot"><b>${s.coin}</b> <span class="badge ${sd==="SHORT"?"bear":"bull"}">${sd}</span> · size ${usd(s.cost)} · now ${usd(val)} · net if sold <b class="${cls(np)}">${sgn(np)}</b><br>entry ${px(s.entry_px)} · price ${px(pr)}<br>
       <span class="pos">TP ${px(s.tp_px)}</span> (${pct(L.to_tp_pct ?? (s.tp_px&&pr?s.tp_px/pr-1:null))}) · <span class="neg">SL ${px(s.sl_px)}</span> (${pct(L.to_sl_pct ?? (s.sl_px&&pr?s.sl_px/pr-1:null))})</div>`; });
-  for (let i = PL.slots.length; i < PL.max_positions; i++) sl.push(`<div class="slot free">Free slot · next up arrow buys <b>${usd(PL.next_trade_size)}</b> (equity ÷ ${PL.max_positions}, capped at pool cash ${usd(PL.cash)})</div>`);
+  const nextLab = (ST.sides === "long") ? "next up arrow buys" : "next arrow opens";
+  for (let i = PL.slots.length; i < PL.max_positions; i++) sl.push(`<div class="slot free">Free slot · ${nextLab} <b>${usd(PL.next_trade_size)}</b> (equity ÷ ${PL.max_positions}, capped at pool cash ${usd(PL.cash)})</div>`);
   const sk = (PL.skipped||[]).slice(-8).reverse();
-  $("poolB").innerHTML = `<div class="slots">${sl.join("")}</div><div class="skl"><b>Skipped arrows</b> <span class="mut">(${PL.n_skipped||0} · slots full, not queued)</span>${sk.map(k=>`<div>${wt(k.sig_t)} · <b>${k.coin}</b> ▲ ${k.tf} · ${k.reason} (${(k.held||[]).join("+")} held, strength ${(k.strength||0).toFixed(2)})</div>`).join("") || '<div class="mut">none yet</div>'}</div>
-    <div class="mut" style="font-size:11px;margin-top:6px">TP/SL prices = where the net P&amp;L (after the entry fee and the 0.1% exit fee) is +$${PL.tp_usd} / −$${PL.sl_usd}. Checked live every 5 s; a hit sells at the level price. Re-entry needs a new up arrow.</div>`;
+  $("poolB").innerHTML = `<div class="slots">${sl.join("")}</div><div class="skl"><b>Skipped arrows</b> <span class="mut">(${PL.n_skipped||0} · not queued)</span>${sk.map(k=>{ const want = (k.side||"long")==="short" ? "▼ short" : "▲ long"; const ret = (k.ret_24h!=null && isFinite(k.ret_24h)) ? ` · 24h ${(k.ret_24h*100).toFixed(2)}%` : ""; const rsiS = (k.rsi!=null && isFinite(k.rsi)) ? ` · RSI ${Number(k.rsi).toFixed(1)}` : "";
+    return `<div>${wt(k.sig_t)} · <b>${k.coin}</b> ${want} ${k.tf} · ${k.reason}${ret}${rsiS} (${(k.held||[]).join("+")} held, strength ${(k.strength||0).toFixed(2)})</div>`; }).join("") || '<div class="mut">none yet</div>'}</div>
+    <div class="mut" style="font-size:11px;margin-top:6px">TP/SL prices = where the net P&amp;L (after the entry fee and the 0.1% exit fee) is +$${PL.tp_usd} / −$${PL.sl_usd}. Checked live every 5 s; a hit closes at the level price. Re-entry needs a new arrow. ${ST.sides==="long"?"Long-only.":"Long+Short (1x paper)."} Filter ${ST.entry_filter_2pct?"ON (+2%/24h longs, −2%/24h shorts).":"OFF."}</div>`;
 }
 function kpis(){
   const s = ST.stats, L = LIVE || {}, cap = ST.capital, bal = L.balance ?? ST.balance_close, bh = L.bh_balance ?? ST.bh_close;
@@ -183,11 +231,12 @@ function kpis(){
   ];
   $("kpis").innerHTML = K.map(([l,v,s2,c,b])=>`<div class="kpi ${b||""}"><div class="l">${l}</div><div class="v ${c}">${v}</div><div class="s">${s2}</div></div>`).join("");
 }
-const MODE_RULE = {arrow_long: "Long-only, follows the SSL Hybrid Exit Arrows (TradingView plotarrow \"Exit Arrows\"): ▲ up arrow = close crosses above the Exit SSL (HMA15 of highs/lows) → BUY at the next bar open; ▼ down arrow = close crosses below it → SELL to cash. Between arrows the latest arrow's state is held; on a mode or timeframe switch a coin whose latest arrow is up is bought at once at the live price. Never shorts.",
+const MODE_RULE = {arrow_long: "Follows the SSL Hybrid Exit Arrows (TradingView plotarrow \"Exit Arrows\"): ▲ up arrow = close crosses above the Exit SSL (HMA15 of highs/lows); ▼ down arrow = close crosses below it. Between arrows the latest arrow's state is held.",
+  arrow_long_ls: "Long+Short (1x paper): an up arrow closes any short and opens a long; a down arrow closes any long and opens a short. Same 5-slot pool, TP +$5 / SL −$5 net of fees. Short P&amp;L is entry-price inverse (value = max(2×collateral − units×price, 0)). Switching to Long-only closes open shorts immediately.",
   state_long: "Long-only, state-following: holds LONG while bull (bought at the start if already bull), sells to cash when the state turns bear, re-buys on the next bull (long) signal. Never shorts.",
   state_ls: "Long+short, state-following: LONG while bull, unlevered SHORT while bear, flips at the next bar open (entered at the start).",
   cross_long: "Long-only crossover (original): buys only on a fresh long signal after the start, sells on a short signal."};
-let TF = "15m", TFREQ = null;
+let TF = "15m", TFREQ = null, FLTREQ = null, SIDESREQ = null;
 function tfUI(){
   TF = ST.active_tf || "15m"; BAR = ({"15m":9e5,"1h":36e5,"4h":144e5})[TF];
   document.querySelectorAll(".tfN").forEach(e=>e.textContent = TF);
@@ -196,25 +245,44 @@ function tfUI(){
   const sw = (ST.segments||[]).slice(1); const l = sw[sw.length-1];
   $("tfMsg").textContent = TFREQ ? `switching to ${TFREQ}…` : (l ? `on ${TF} since ${wt(l.from_ms)} WIB (from ${l.from_tf}) · ${sw.length} switch${sw.length>1?"es":""}` : `on ${TF} since start`);
 }
-async function requestTimeframe(tf){
-  if (!["15m","1h","4h"].includes(tf)) return;
-  if (tf === TF) { $("tfMsg").textContent = "Bot already uses " + tf; return; }
-  TFREQ = tf; tfUI();
-  try { await post("/api/timeframe", {tf}); }
-  catch (e) { TFREQ = null; tfUI(); alert("Timeframe switch failed: " + e.message); return; }
+function fltUI(){
+  const on = !!ST.entry_filter_2pct;
+  if (FLTREQ != null && !!FLTREQ === on) FLTREQ = null;
+  document.querySelectorAll("#fltSeg button").forEach(b => { const v = b.dataset.filter === "on"; b.className = (v === on) ? "on" : (FLTREQ != null && v === !!FLTREQ ? "req" : ""); });
+  $("fltMsg").textContent = FLTREQ != null ? `switching filter ${FLTREQ ? "ON" : "OFF"}…` : (on ? "ON: new longs need +2% / 24h, new shorts −2% / 24h (15m candles)" : "OFF: enter on every qualifying arrow");
+}
+function sidesUI(){
+  const cur = (ST.sides === "long") ? "long" : "ls";
+  if (SIDESREQ && SIDESREQ === cur) SIDESREQ = null;
+  document.querySelectorAll("#sidesSeg button").forEach(b => { b.className = b.dataset.sides === cur ? "on" : (b.dataset.sides === SIDESREQ ? "req" : ""); });
+  $("sidesMsg").textContent = SIDESREQ ? `switching to ${SIDESREQ === "ls" ? "Long+Short" : "Long-only"}…` : (cur === "ls" ? "Long+Short (1x paper) is on" : "Long-only is on");
+}
+document.querySelectorAll("#tfSeg button").forEach(b=>b.onclick = async ()=>{
+  if (b.dataset.tf === TF) return; TFREQ = b.dataset.tf; tfUI();
+  try { await post("/api/timeframe", {tf: b.dataset.tf}); } catch (e) { TFREQ = null; alert("Timeframe switch failed: " + e.message); }
   let n = 0; const iv = setInterval(()=>{ poll(); if (!TFREQ || ++n > 80) { clearInterval(iv); if (TFREQ) { TFREQ = null; tfUI(); } } }, 2500);
-}
-document.querySelectorAll("#tfSeg button").forEach(b=>b.onclick = ()=>requestTimeframe(b.dataset.tf));
-// A timeframe link opened from the public dashboard is handled by this local controller.
-const deepLinkTf = new URLSearchParams(window.location.search).get("tf");
-if (["15m","1h","4h"].includes(deepLinkTf)) {
-  window.history.replaceState({}, "", window.location.pathname);
-  setTimeout(()=>requestTimeframe(deepLinkTf), 1200);
-}
+});
+document.querySelectorAll("#fltSeg button").forEach(b=>b.onclick = async ()=>{
+  const on = b.dataset.filter === "on"; if (on === !!ST.entry_filter_2pct && FLTREQ == null) return;
+  FLTREQ = on; fltUI();
+  try { await post("/api/entry_filter", {entry_filter_2pct: on}); } catch (e) { FLTREQ = null; alert("Filter switch failed: " + e.message); fltUI(); }
+  let n = 0; const iv = setInterval(()=>{ poll(); if (FLTREQ == null || ++n > 80) { clearInterval(iv); if (FLTREQ != null) { FLTREQ = null; fltUI(); } } }, 2500);
+});
+document.querySelectorAll("#sidesSeg button").forEach(b=>b.onclick = async ()=>{
+  const sides = b.dataset.sides; if (sides === ((ST.sides === "long") ? "long" : "ls") && !SIDESREQ) return;
+  SIDESREQ = sides; sidesUI();
+  try { await post("/api/sides", {sides}); } catch (e) { SIDESREQ = null; alert("Sides switch failed: " + e.message); sidesUI(); }
+  let n = 0; const iv = setInterval(()=>{ poll(); if (!SIDESREQ || ++n > 80) { clearInterval(iv); if (SIDESREQ) { SIDESREQ = null; sidesUI(); } } }, 2500);
+});
 function modeUI(){
   const m = ST.trade_mode || "cross_long";
   $("sigR").textContent = ST.signal_timing === "intrabar" ? "Signals intrabar (live): every ~5 s the Exit SSL is recomputed on the forming candle with the live Binance price as its close; an up arrow BUYS at once at the live price (reason ARROW_INTRABAR), a down arrow on a held coin SELLS at once; max one entry and one exit per coin per candle, no re-entry in the candle of an exit; an arrow only visible on the closed bar fills at the next open (ARROW_CLOSE). The TradingView arrow can disappear before the close; the fill stands." : "Decisions on bar close, filled at the next bar's open (= first trade of the bar).";
-  $("modeB").textContent = "mode " + m + (ST.pool ? " · max " + ST.pool.max_positions + " · pool" : ""); $("modeT").textContent = m + " · " + (ST.trade_mode_text || ""); $("modeR").textContent = (MODE_RULE[m] || "") + (ST.pool ? ` Sizing: Max positions ${ST.pool.max_positions} · pool sizing: one shared cash pool (balance carried over ${(ST.pool.since_wib||"").slice(0,16)} WIB); a fresh up arrow on a free slot buys equity ÷ max positions (capped at pool cash); more arrows than free slots on one bar → the strongest (close − exit line)/ATR wins, the rest are skipped (not queued). TP +$${ST.pool.tp_usd} / SL −$${ST.pool.sl_usd} per position, net of fees, checked live every 5 s (sold at the level price; catch-up on bar high/low, SL first); after TP/SL a coin needs a new up arrow.` : "");
+  const rule = (m === "arrow_long" && ST.sides !== "long") ? (MODE_RULE.arrow_long + " " + MODE_RULE.arrow_long_ls) : (MODE_RULE[m] || "");
+  const rsiTxt = ST.rsi_filter_text || (ST.rsi_filter && ST.rsi_filter.enabled ? `RSI(${ST.rsi_filter.length||14}) filter: Long <${ST.rsi_filter.long_below} / Short >${ST.rsi_filter.short_above}` : "RSI(14) filter: OFF");
+  if ($("rsiB")) $("rsiB").textContent = rsiTxt;
+  $("modeB").textContent = "mode " + m + (ST.sides === "long" ? " · Long-only" : " · Long+Short") + (ST.entry_filter_2pct ? " · filter ON" : " · filter OFF") + (ST.pool ? " · max " + ST.pool.max_positions + " · pool" : "");
+  $("modeT").textContent = m + " · " + (ST.trade_mode_text || "");
+  $("modeR").textContent = rule + " " + rsiTxt + " (entries only; exits unchanged). Entry filter: " + (ST.entry_filter_2pct ? "ON — a new long needs +2% over the last 24 hours (15m candles); a new short needs −2%. Existing positions and exits are unchanged." : "OFF — new entries on every qualifying arrow.") + (ST.pool ? ` Sizing: Max positions ${ST.pool.max_positions} · pool sizing: one shared cash pool (balance carried over ${(ST.pool.since_wib||"").slice(0,16)} WIB); a fresh arrow on a free slot opens equity ÷ max positions (capped at pool cash); more arrows than free slots on one bar → the strongest (close − exit line)/ATR wins, the rest are skipped (not queued). TP +$${ST.pool.tp_usd} / SL −$${ST.pool.sl_usd} per position, net of fees, checked live every 5 s (closed at the level price; catch-up on bar high/low, SL first); after TP/SL a coin needs a new arrow.` : "");
 }
 const sideBadge = p => !p ? '<span class="badge neu">FLAT · cash</span>' : (p.side === "short" ? '<span class="badge bear">SHORT</span>' : '<span class="badge bull">LONG</span>');
 function coinCards(){
@@ -233,18 +301,21 @@ function coinCards(){
         <span class="k">Net if sold</span><span class="x ${cls(L.net_pnl)}"><b>${sgn(L.net_pnl)}</b></span>
         <span class="k">TP / SL</span><span class="x"><span class="pos">${px(p.tp_px)}</span> (${pct(L.to_tp_pct)}) / <span class="neg">${px(p.sl_px)}</span> (${pct(L.to_sl_pct)})</span>
         <span class="k">Exit line (live)</span><span class="x">${px(lv.exit_line ?? I.exit_line)} · ${now && (lv.exit_line??I.exit_line) ? pct(now/(lv.exit_line??I.exit_line)-1) : "–"}</span>
+        <span class="k">RSI(14)</span><span class="x">${(() => { const rv = L.rsi ?? lv.rsi ?? I.rsi; return rv != null && isFinite(rv) ? `<b class="${rv < 35 ? "pos" : rv > 65 ? "neg" : ""}">${Number(rv).toFixed(1)}</b>` : "–"; })()}</span>
         <span class="k">Held</span><span class="x">${dur((Date.now()-p.entry_t)/1000)}${c.in_universe===false?' · <span class="mut">legacy coin, exit only</span>':""}</span>
       </div></div>`; };
   const mini = c => {
     const I = c.ind || {}, L = lc[c.coin] || {}, lv = I.live || {}, now = L.price ?? I.close, ex = lv.exit_line ?? I.exit_line, d = now && ex ? now/ex-1 : null;
+    const rv = L.rsi ?? lv.rsi ?? I.rsi;
+    const rsiH = rv != null && isFinite(rv) ? `<span class="${rv < 35 ? "pos" : rv > 65 ? "neg" : ""}">RSI ${Number(rv).toFixed(1)}</span>` : "<span>RSI –</span>";
     const ar = lv.arrow > 0 ? '<span class="pos">▲ live</span>' : lv.arrow < 0 ? '<span class="neg">▼ live</span>' : I.last_arrow ? `<span class="${I.last_arrow==="up"?"pos":"neg"}">${I.last_arrow==="up"?"▲":"▼"}${I.bars_since_arrow}</span>` : "–";
     return `<div class="cc ${lv.arrow>0?"up":""} ${c.tradable===false?"ex":""}"><div class="r1"><span class="nm">${c.coin}</span><span>${ar}</span></div>
       <div class="r2"><span>${px(now)}</span><span class="${cls(d)}" title="price vs Exit SSL line">${d==null?"–":(d>=0?"+":"")+(d*100).toFixed(2)+"%"}</span></div>
-      <div class="r2"><span>${rk(c.coin)?"#"+rk(c.coin):""}</span><span>${c.n_trades?c.n_trades+" tr "+sgn(c.pnl_realised):""}</span></div></div>`; };
+      <div class="r2">${rsiH}<span>${rk(c.coin)?"#"+rk(c.coin):""}${c.n_trades?" · "+c.n_trades+"tr":""}</span></div></div>`; };
   $("coins").innerHTML = big.map(full).join("") + small.map(mini).join("");
 }
 function tradeLog(trades){
-  $("tl").querySelector("tbody").innerHTML = trades.slice().reverse().map(t=>`<tr><td>${wt(t.exit_t)}</td><td><b>${t.coin}</b>${t.side==="short"?' <span class="badge bear">short</span>':''}<div class="mut" style="font-size:11px">${t.entry_tf?(t.entry_tf===t.exit_tf?t.entry_tf:t.entry_tf+"→"+t.exit_tf):"15m"} · ${t.entry_mode&&t.exit_mode&&t.entry_mode!==t.exit_mode?t.entry_mode+"→"+t.exit_mode:(t.exit_mode||"state_long")}</div></td><td>${px(t.entry_px)} → ${px(t.exit_px)}<div class="mut" style="font-size:11px">in ${wt(t.entry_t)}</div></td><td>${t.bars}<div>${t.entry_reason?`<span class="rs ${t.entry_reason}">in ${t.entry_reason}</span> `:""}<span class="rs ${t.exit_reason||"ARROW"}">${t.exit_reason||"ARROW"}</span></div></td><td class="${cls(t.pnl)}">${sgn(t.pnl)}</td><td class="${cls(t.ret)}">${pct(t.ret)}</td><td>${usd(t.fee,3)}</td></tr>`).join("");
+  $("tl").querySelector("tbody").innerHTML = trades.slice().reverse().map(t=>`<tr><td>${wt(t.exit_t)}</td><td><b>${t.coin}</b>${t.side==="short"?' <span class="badge bear">SHORT</span>':' <span class="badge bull">LONG</span>'}<div class="mut" style="font-size:11px">${t.entry_tf?(t.entry_tf===t.exit_tf?t.entry_tf:t.entry_tf+"→"+t.exit_tf):"15m"} · ${t.entry_mode&&t.exit_mode&&t.entry_mode!==t.exit_mode?t.entry_mode+"→"+t.exit_mode:(t.exit_mode||"state_long")}</div></td><td>${px(t.entry_px)} → ${px(t.exit_px)}<div class="mut" style="font-size:11px">in ${wt(t.entry_t)}</div></td><td>${t.bars}<div>${t.entry_reason?`<span class="rs ${t.entry_reason}">in ${t.entry_reason}</span> `:""}<span class="rs ${t.exit_reason||"ARROW"}">${t.exit_reason||"ARROW"}</span></div></td><td class="${cls(t.pnl)}">${sgn(t.pnl)}</td><td class="${cls(t.ret)}">${pct(t.ret)}</td><td>${usd(t.fee,3)}</td></tr>`).join("");
   const op = ST.coins.filter(c=>c.pos);
   $("tlN").textContent = `${trades.length} closed${op.length?" · "+op.length+" open":""}`;
   $("tlE").innerHTML = trades.length ? "" : (ST.trade_mode === "arrow_long" ? "No closed trades yet: positions are bought after an up Exit Arrow and sold after a down arrow." : ST.trade_mode === "cross_long" ? "No closed trades yet. Entries need a fresh crossover above the upper channel after the start; exits need a crossover below the lower channel." : "No closed trades yet: positions follow the baseline state and close when the state flips.") + (op.length ? " Open positions are shown on the coin cards." : "");
@@ -300,6 +371,34 @@ function setState(stt, det){
 async function post(u, body){ const r = await fetch(u, {method:"POST", headers:{"Content-Type":"application/json","X-Requested-With":"ssl-dashboard"}, body: JSON.stringify(body||{})}); if (!r.ok) throw new Error(r.status); return r.json(); }
 $("pauseB").onclick = async () => { const why = prompt("Pause new entries. Reason (shown in the dashboard and the event log):", "manual pause"); if (why === null) return; try { await post("/api/pause", {reason: why}); } catch (e) { alert("Pause failed: " + e.message); } poll(); };
 $("resumeB").onclick = async () => { try { await post("/api/resume"); } catch (e) { alert("Resume failed: " + e.message); } poll(); };
+
+function validCap(v){
+  const x = parseFloat(String(v).replace(/[$,\s]/g,""));
+  return (isFinite(x) && x >= 1 && x <= 1000000) ? Math.round(x*100)/100 : null;
+}
+function fillResetCap(){
+  const el = $("resetCap");
+  if (!el || el.dataset.touched || document.activeElement === el || el.dataset.focused === "1") return;
+  if (ST && isFinite(ST.capital) && ST.capital > 0) el.value = ST.capital;
+}
+$("resetCap").addEventListener("focus", () => { $("resetCap").dataset.focused = "1"; });
+$("resetCap").addEventListener("blur", () => { setTimeout(() => { $("resetCap").dataset.focused = ""; }, 300); });
+["input","change","keyup","paste"].forEach(ev => $("resetCap").addEventListener(ev, () => { $("resetCap").dataset.touched = "1"; }));
+["click","pointerdown","touchstart"].forEach(ev => $("resetCap").addEventListener(ev, e => e.stopPropagation(), {passive:true}));
+$("resetB").onclick = async () => {
+  const cap = validCap($("resetCap").value);
+  const msg = $("resetMsg");
+  if (cap == null) { msg.textContent = "Enter a starting balance from $1 to $1,000,000 (values like -5 are rejected)."; return; }
+  if (!confirm("Reset the paper bot to $" + cap.toFixed(2) + "? This archives the current run and starts a fresh paper book. Open positions are not carried over.")) return;
+  try {
+    await post("/api/reset", {capital: cap});
+    msg.textContent = "Reset to $" + cap.toFixed(2) + " requested. The bot should start the new book within a few seconds.";
+  } catch (e) {
+    msg.textContent = "Reset rejected: " + e.message;
+    alert("Reset failed: " + e.message);
+  }
+  poll();
+};
 function header(){
   const run = BOT && BOT.running;
   if (BOT) {
@@ -329,7 +428,7 @@ async function poll(){
     header();
     if (!ST || !ST.coins) { $("sRun").textContent = "starting… (first bar being processed)"; return; }
     $("startT").textContent = ST.start_wib.replace("T"," ");
-    header(); modeUI(); tfUI(); pool(); kpis(); coinCards(); watch(); alerts();
+    header(); modeUI(); tfUI(); fltUI(); sidesUI(); pool(); kpis(); coinCards(); watch(); alerts();
     if (!$("cSel").children.length) selector();
     const nb = ST.last_bar_t !== lastBar; lastBar = ST.last_bar_t;
     const [tr, ev] = await Promise.all([J("/api/trades"), J("/api/events?n=150")]);

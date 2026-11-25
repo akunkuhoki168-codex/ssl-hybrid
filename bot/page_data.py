@@ -48,7 +48,7 @@ def build():
     for c in ST.get("coins", []):
         ind = c.get("ind") or {}; pos = c.get("pos"); live = lc.get(c["coin"], {})
         coins.append({
-            "coin": c["coin"], "pos": "long" if pos else "cash",
+            "coin": c["coin"], "pos": ((pos.get("side") or "long") if pos else "cash"),
             "entry": rp(pos["entry_px"]) if pos else None, "entry_wib": wib(pos["entry_t"]) if pos else None,
             "price": rp(live.get("price", ind.get("close"))), "value": r(live.get("value", c.get("value_close")), 2),
             "unreal": r(live.get("unreal"), 2), "unreal_pct": r(live.get("unreal_pct"), 5),
@@ -56,7 +56,7 @@ def build():
             "arrow": ind.get("last_arrow"), "arrow_wib": wib(ind.get("last_arrow_t")), "bars_since": ind.get("bars_since_arrow"),
             "exit_state": ind.get("exit_state"), "exit_line": rp(ind.get("exit_line")),
             "ssl1": rp(ind.get("ssl1")), "baseline": rp(ind.get("base")), "color": ind.get("color"),
-            "pending": c.get("pending"), "entry_reason": (pos or {}).get("entry_reason"), "live_arrow": (ind.get("live") or {}).get("arrow")})
+            "pending": c.get("pending"), "entry_reason": (pos or {}).get("entry_reason"), "live_arrow": (ind.get("live") or {}).get("arrow"), "rsi": r(live.get("rsi") if live.get("rsi") is not None else ((ind.get("live") or {}).get("rsi") if (ind.get("live") or {}).get("rsi") is not None else ind.get("rsi")), 2), "live_rsi": r((ind.get("live") or {}).get("rsi"), 2), "closed_rsi": r(ind.get("rsi"), 2)})
     tr = jsonl("trades.jsonl"); tr.sort(key=lambda t: t.get("exit_t", 0))
     trades = [{"coin": t["coin"], "in": t.get("entry_wib", wib(t.get("entry_t")))[5:16], "out": t.get("exit_wib", wib(t.get("exit_t")))[5:16],
                "entry": rp(t["entry_px"]), "exit": rp(t["exit_px"]), "pnl": r(t["pnl"], 2), "ret": r(t["ret"], 5),
@@ -66,7 +66,7 @@ def build():
     if bal is not None and hbms and (not eq or hbms > eq[-1]["t"]): eq.append({"t": hbms, "eq": bal, "bh": bh})
     eq = downsample(eq, 80)
     equity = [{"l": wib(e["t"], "%H:%M"), "eq": r(e["eq"], 2), "bh": r(e.get("bh"), 2)} for e in eq]
-    opens = [{"coin": p["coin"], "entry_wib": p["entry_wib"][5:16], "entry": rp(p["entry_px"]), "price": rp(p["price"]),
+    opens = [{"coin": p["coin"], "side": (p.get("side") or "LONG"), "entry_wib": p["entry_wib"][5:16], "entry": rp(p["entry_px"]), "price": rp(p["price"]),
               "unreal": r(p["unreal_usd"], 2), "unreal_pct": r(p["unreal_pct"], 5), "bars": p.get("bars")} for p in S.get("open_positions", [])]
     rules = ST.get("rules", {})
     return {
@@ -86,10 +86,11 @@ def build():
         "profit_factor": r(stats.get("profit_factor"), 3), "exposure_pct": r(stats.get("exposure_pct"), 4),
         "realised": r(stats.get("realised_pnl"), 2), "source": ST.get("source"),
         "rules": {"entry": rules.get("entry"), "exit": rules.get("exit"), "fee": rules.get("fee_per_side"), "fill": rules.get("fill"),
-                  "direction": rules.get("direction"), "compounding": rules.get("compounding")},
+                  "direction": rules.get("direction"), "compounding": rules.get("compounding"), "entry_filter_2pct": rules.get("entry_filter_2pct"), "rsi_filter": rules.get("rsi_filter"), "rsi_filter_text": rules.get("rsi_filter_text"), "sides": rules.get("sides")},
         "tf_switches": [{"at": s.get("at_wib"), "from": s.get("from"), "to": s.get("to")} for s in S.get("tf_switches", [])],
         "mode_switches": [{"at": s.get("at_wib"), "from": s.get("from"), "to": s.get("to")} for s in S.get("mode_switches", [])],
         "equity": equity, "coins": coins, "open": opens, "trades": trades,
+        "entry_filter_2pct": ST.get("entry_filter_2pct"), "rsi_filter": S.get("rsi_filter") or ST.get("rsi_filter"), "rsi_filter_text": S.get("rsi_filter_text") or ST.get("rsi_filter_text"), "sides": ST.get("sides") or "ls", "sides_text": ST.get("sides_text"),
         "pending": S.get("pending", []), "flips": S.get("fresh_watchlist_flips_15m", []),
     }
 

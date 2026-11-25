@@ -2,6 +2,7 @@
     <div class="card">
       <div class="rbtop"><span class="pill stp" id="rbPill"><i></i><span id="rbPillT">LOADING</span></span><span class="pill stale hide" id="rbStalePill">STALE</span><span class="meta" id="rbMode"></span></div>
       <div class="rbdet" id="rbDetail"></div>
+      <div class="meta" id="rbRsiLine" style="margin-top:4px;font-weight:600"></div>
       <div class="rbstale hide" id="rbStale"></div>
       <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
       <div class="meta" style="margin-top:6px">The timeframe and pause/resume are changed by messaging the bot in chat (this public page is read-only).</div>

@@ -30,6 +30,12 @@ atr_crit = input.float(0.9, step=0.1, title="Continuation ATR Criteria", group="
 SSL3Type = input.string("HMA", title="Exit Type", options=["DEMA","TEMA","LSMA","VAMA","TMA","HMA","JMA", "Kijun v2", "McGinley", "MF"], group="Exit Settings")
 len3 = input.int(15, title="Exit Length", group="Exit Settings")
 
+// === RSI ENTRY FILTER SETTINGS ===
+use_rsi_filter = input.bool(true, title="Enable RSI Entry Filter", group="RSI Entry Filter")
+rsi_length = input.int(14, title="RSI Length", minval=1, group="RSI Entry Filter")
+rsi_long_below = input.float(35.0, title="Long Entry RSI Below (<)", minval=0.0, maxval=100.0, step=1.0, group="RSI Entry Filter")
+rsi_short_above = input.float(65.0, title="Short Entry RSI Above (>)", minval=0.0, maxval=100.0, step=1.0, group="RSI Entry Filter")
+
 // === ATR SETTINGS ===
 atrlen = input.int(14, title="ATR Period", group="ATR Settings")
 mult = input.float(1.0, title="ATR Multiplier", step=0.1, group="ATR Settings")
@@ -251,9 +257,15 @@ entry_distance = distance_from_baseline < 1 ? "Near" : distance_from_baseline < 
 risk_level = atr_percentile > 75 ? "High" : atr_percentile < 25 ? "Low" : "Normal"
 
 // === SIGNAL CALCULATIONS ===
+rsi_val = ta.rsi(close, rsi_length)
+rsi_long_ok = not use_rsi_filter or rsi_val < rsi_long_below
+rsi_short_ok = not use_rsi_filter or rsi_val > rsi_short_above
+
 base_cross_Long = ta.crossover(close, sslExit)
 base_cross_Short = ta.crossover(sslExit, close)
-codiff = base_cross_Long ? 1 : base_cross_Short ? -1 : na
+entry_long = base_cross_Long and rsi_long_ok
+entry_short = base_cross_Short and rsi_short_ok
+codiff = entry_long ? 1 : entry_short ? -1 : na
 
 // Baseline Violation Candle
 difference = math.abs(close - open)
@@ -298,7 +310,7 @@ atr_upper = plot(show_atr_bands ? upper_band : na, "+ATR", color=neutral_color, 
 atr_lower = plot(show_atr_bands ? lower_band : na, "-ATR", color=neutral_color, linewidth=1)
 
 // SIGNALS
-plotarrow(show_exit ? codiff : na, colorup=bullish_color, colordown=bearish_color, title="Exit Arrows", maxheight=20)
+plotarrow(show_exit ? codiff : na, colorup=bullish_color, colordown=bearish_color, title="Exit / Entry Arrows (RSI-gated)", maxheight=20)
 plotshape(show_signals and candlesize_violation, color=color.white, size=size.tiny, style=shape.diamond, location=location.top, title="Signal Diamonds")
 
 // BAR COLORING
@@ -359,6 +371,13 @@ alertcondition(exit_long, title = "EXIT LONG Signal",
 
 alertcondition(exit_short, title = "EXIT SHORT Signal", 
       message = "EXIT SHORT Signal – see chart for price and risk details")
+
+// RSI-Gated Entry Alerts
+alertcondition(entry_long, title = "ENTRY LONG Signal (RSI-gated)",
+      message = "ENTRY LONG Signal – up Exit Arrow with RSI below threshold")
+
+alertcondition(entry_short, title = "ENTRY SHORT Signal (RSI-gated)",
+      message = "ENTRY SHORT Signal – down Exit Arrow with RSI above threshold")
 
 // SSL2 Continuation Alerts
 alertcondition(ssl2_buy_signal, title = "SSL2 BUY Continuation", 

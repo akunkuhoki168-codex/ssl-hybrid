@@ -51,15 +51,15 @@ tr.fresh{background:rgba(245,158,11,.12)}
 .note{font-size:12px;color:var(--mut);margin-top:14px}
 .err{color:var(--dn);font-size:13px}
 .hide{display:none}
-.runbar{display:flex;gap:8px;align-items:stretch}
-#runBtn{flex:1;min-height:54px;font-size:19px;font-weight:700;background:#16a34a;border-color:#16a34a;color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(22,163,74,.35)}
-#runBtn:disabled{background:#14532d;border-color:#14532d;color:#bbf7d0;cursor:wait;box-shadow:none}
+/* runBtn removed */
+/* */
+/* */
 #runBtn.attn{animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
 .spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:rot .8s linear infinite;display:none}
-#runBtn:disabled .spin{display:inline-block}
+/* */
 @keyframes rot{to{transform:rotate(360deg)}}
-.auto{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:13px;color:var(--mut);white-space:nowrap;cursor:pointer;min-height:54px}
+.auto{display:none}
 .auto input{width:22px;height:22px;min-height:0;accent-color:#16a34a;margin:0}
 .runinfo{font-size:12px;color:var(--mut);margin-top:-2px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .stale{display:none;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.5);color:var(--warn);border-radius:10px;padding:9px 12px;font-size:14px;font-weight:600}
@@ -84,6 +84,10 @@ body.onPaper #tfSeg,body.onPaper #dirSeg,body.onPaper #exSeg,body.onPaper .ctl>.
 .newsig{display:none;background:rgba(245,158,11,.16);border:1px solid var(--warn);color:var(--warn);border-radius:10px;padding:9px 12px;font-weight:650;font-size:14px;margin-bottom:10px;animation:pulse2 1.6s ease-in-out infinite}
 @keyframes pulse2{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.5)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
 #ppc{height:230px}#ppx{height:330px}
+.pload{display:none;align-items:center;gap:10px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.45);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;margin-bottom:10px}
+.pload.on{display:flex}.pload .spin{display:inline-block;flex:none;border-color:rgba(147,197,253,.35);border-top-color:#93c5fd}
+.pload .bar{height:4px;background:rgba(255,255,255,.12);border-radius:3px;margin-top:6px;overflow:hidden}.pload .bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .25s}
+.chips label.botc{border-color:var(--acc)}
 .simtag{display:inline-block;background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.55);color:var(--warn);border-radius:8px;padding:2px 8px;font-size:11.5px;font-weight:650;margin-bottom:6px}
 .pseg{display:flex;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;min-height:44px}
 .pseg button{flex:1;border:0;background:transparent;min-height:36px;padding:0 6px;border-radius:8px;color:var(--mut);white-space:nowrap}
@@ -100,7 +104,11 @@ body.isStale #vSig .card,body.isStale #vDet .card{opacity:.45;transition:opacity
 .cap input{width:130px;text-align:right;font-variant-numeric:tabular-nums}
 @media(min-width:760px){.pform{grid-template-columns:1.3fr 1fr 1fr 1fr}#ppc{height:280px}#ppx{height:420px}.ctl{grid-template-columns:1.4fr 1fr 1fr 1fr}.runbar,.runinfo,.stale{grid-column:1/-1}.kpis{grid-template-columns:repeat(4,1fr)}#pc{height:440px}#ec{height:260px}}
 /* ---- Real bot tab ---- */
-body.onBot .ctl{display:none}
+.rb-tf{display:flex;gap:6px;margin:8px 0}
+.rb-tf button{flex:1;min-height:40px;font-size:14px;font-weight:600}
+.rb-tf button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+
+/* controls moved inside Simulation tab */
 #tabBot{font-weight:650}
 .rbtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 12px;font-weight:750;font-size:13px;letter-spacing:.04em}
@@ -124,7 +132,7 @@ body.onBot .ctl{display:none}
 .cc .m{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.35;overflow-wrap:anywhere}
 .tagL{background:rgba(34,197,94,.18);color:var(--up);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
 .tagC{background:rgba(138,147,166,.18);color:var(--mut);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
-#rbEq{height:220px}#rbPx{height:340px}
+#rbEq{height:200px;max-width:none;aspect-ratio:auto;margin:0}#rbPx{height:340px}
 #rbEq,#rbPx{width:100%;overflow:hidden}
 .flt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .flt select{flex:1;min-width:0}
@@ -162,7 +170,7 @@ body.onBot .ctl{display:none}
 .skp{font-size:12px;padding:5px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 .ev .k.skip{background:rgba(245,158,11,.16);color:#fbbf24}.ev .k.tpsl{background:rgba(239,68,68,.16);color:#fca5a5}.ev .k.resize{background:rgba(59,130,246,.18);color:#93c5fd}
 @media(min-width:760px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:760px){.ccards{grid-template-columns:repeat(6,minmax(0,1fr))}.cc.wide{grid-column:span 3}#rbEq{height:260px}#rbPx{height:440px}.cinfo{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:760px){.ccards{grid-template-columns:repeat(6,minmax(0,1fr))}.cc.wide{grid-column:span 3}#rbEq{height:220px;max-width:none}#rbPx{height:440px}.cinfo{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .cc.wide{grid-column:1/-1}
 .cc.mini{padding:7px 9px;border-radius:10px}.cc.mini .n{font-size:14px}.cc.mini .m{margin-top:2px;font-variant-numeric:tabular-nums}.cc.mini .t.m{display:flex}
 .cc.exl{opacity:.55}.szp.sig{background:#1e3a8a;color:#bfdbfe}
@@ -176,33 +184,41 @@ body.onBot .ctl{display:none}
   <div class="prog" id="prog"></div>
 </header>
 <main>
-  <div class="ctl">
-    <div class="seg" id="tfSeg"></div>
-    <div class="seg" id="dirSeg"></div>
-    <div class="seg" id="exSeg"></div>
-    <div class="cap"><label for="capIn">Starting capital (USD)</label><input id="capIn" type="number" inputmode="decimal" min="1" step="50" value="500"></div>
-    <div class="runbar"><button id="runBtn" aria-label="Re-run now (optional, it runs automatically)"><span class="spin"></span><span id="runLab">↻ Re-run</span></button><label class="auto"><input type="checkbox" id="autoIn" checked>Auto-refresh 60s</label></div>
-    <div class="runinfo"><span id="runInfo">Last run: –</span><span id="runSetup"></span></div>
-    <div class="stale" id="staleMsg">Settings changed, updating automatically…</div>
+  
+  <div id="tfSeg" style="display:none"></div>
+  <div id="dirSeg" style="display:none"></div>
+  <div id="exSeg" style="display:none"></div>
+  <input id="capIn" type="number" style="display:none" value="500">
+
+  <div id="runInfo" style="display:none"></div><div id="runSetup" style="display:none"></div><div id="staleMsg" class="stale" style="display:none"></div><input type="checkbox" id="autoIn" checked style="display:none">
+
+  <div class="tabs">
+    <button id="tabBot" class="on">Real Bot</button>
+    <button id="tabPap">Simulation</button>
   </div>
-  <div class="tabs"><button id="tabBot" class="on">Real bot</button><button id="tabSig">Signals</button><button id="tabDet">Coin detail</button><button id="tabPap">Paper (arrows)</button></div>
 
   <section id="vBot" class="hide">
     <div class="card">
       <div class="rbtop"><span class="pill stp" id="rbPill"><i></i><span id="rbPillT">LOADING</span></span><span class="pill stale hide" id="rbStalePill">STALE</span><span class="meta" id="rbMode"></span></div>
       <div class="rbdet" id="rbDetail"></div>
+      <div class="meta" id="rbRsiLine" style="margin-top:4px;font-weight:600"></div>
       <div class="rbstale hide" id="rbStale"></div>
       <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
-      <div class="meta" style="margin-top:6px">The timeframe and pause/resume are changed by messaging the bot in chat (this public page is read-only).</div>
+      <div class="rb-tf" id="rbTfSeg">
+        <button type="button" data-tf="15m">15m</button>
+        <button type="button" data-tf="1h">1h</button>
+        <button type="button" data-tf="4h">4h</button>
+      </div>
+      <div class="meta" id="rbTfNote">Highlighted = the bot's active timeframe. Tap to change it on GitHub: set tf to 15m, 1h or 4h and commit; the bot switches within ~1 min.</div>
       <div id="rbErr" class="err"></div>
     </div>
+    <div class="card" style="text-align:center"><div class="h3">Equity vs buy & hold</div><div class="legend" style="justify-content:center"><span><i class="dot" style="background:#22c55e"></i>Bot</span><span><i class="dot" style="background:#8a93a6"></i>Buy & hold</span></div><div id="rbEq"></div></div>
     <div class="card">
       <div class="livebar"><span class="live" id="rbLive"><i></i><span id="rbLiveT">CONNECTING</span></span><span class="meta" id="rbLiveAt">connecting to Binance…</span></div>
       <div class="phead"><div><div class="meta">Paper balance · live mark</div><div class="big" id="rbBal">–</div><div id="rbPnl" class="meta"></div></div>
       <div class="cd">Next <span id="rbTf">–</span> bar close<br><b id="rbCd">–</b><div id="rbCdAt"></div></div></div>
       <div class="kpis" id="rbKpis" style="margin-top:10px"></div><div class="meta" id="rbAsOf" style="margin-top:8px"></div>
     </div>
-    <div class="card"><div class="h3">Equity vs buy &amp; hold</div><div class="legend"><span><i class="dot" style="background:#22c55e"></i>Bot equity (USD)</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold same coins</span></div><div id="rbEq"></div></div>
     <div class="rbpend hide" id="rbPend"></div>
     <div class="card hide" id="rbPoolC"><div class="h3">Pool <span class="meta" id="rbPoolH"></span></div><div class="slots" id="rbSlots"></div><div class="meta" id="rbPoolN" style="margin-top:6px"></div><div class="h3" style="margin-top:10px;font-size:14px">Skipped arrows <span class="meta">· slots full, not queued</span></div><div id="rbSkip"></div></div>
     <div class="card"><div class="h3">Coins <span class="meta">· live prices · positions as of <span class="asof">–</span> · tap a coin for its chart</span></div><div class="ccards" id="rbCards"></div></div>
@@ -218,7 +234,7 @@ body.onBot .ctl{display:none}
     <div class="card"><div class="meta" id="rbRules"></div></div>
   </section>
 
-  <section id="vSig" class="hide">
+  <section id="vSig" class="hide" hidden aria-hidden="true"><!-- legacy Signals view: hidden, kept only so the shared JS finds its elements -->
     <div class="card">
       <div class="meta" style="margin-bottom:6px">State on the last <b>closed</b> bar. Highlighted rows (orange dot) flipped within the last 3 bars; Bars = bars since the last baseline signal (↑ long, ↓ short). Tap a header to sort, tap a row for detail. Backtest PF/return/End $ use the last 1000 bars, starting from your capital.</div>
       <div class="tblwrap"><table id="sigT"><thead><tr>
@@ -228,7 +244,7 @@ body.onBot .ctl{display:none}
     </div>
   </section>
 
-  <section id="vDet" class="hide">
+  <section id="vDet" class="hide" hidden aria-hidden="true"><!-- legacy Coin detail view: hidden, kept only so the shared JS finds its elements -->
     <div class="card">
       <div class="sym"><select id="coinSel" aria-label="Coin"></select><input id="symIn" placeholder="e.g. WIF" aria-label="Any symbol" autocapitalize="characters"><button id="symGo">Go</button></div>
       <div id="detHead" style="margin-top:10px;font-weight:650"></div>
@@ -246,7 +262,17 @@ body.onBot .ctl{display:none}
   </section>
 
   <section id="vPap" class="hide">
-    <div class="sim"><b>BROWSER SIMULATION: this is NOT the 24/7 paper bot's actual trades or balance.</b> This page runs its own paper simulation in your browser, recomputed on every page load from the start time below using Binance public price history, so its numbers can differ from the bot's (the bot switched rules and timeframes during its run; this page applies one rule from the start). No exchange keys are used and no orders are placed anywhere. Default: <b>Exit Arrows, long-only</b>, $500 split across ZEC, NEAR, PEPE, SOL, XRP; BUY at the next bar open after a ▲ up arrow (close crosses above the Exit SSL HMA15), sell to cash after a ▼ down arrow. Indicator = Mihkel00 SSL Hybrid, TradingView Pine v6 (WMA ATR smoothing), identical to the bot's ssl_core.py. Fees 0.1% per side.</div>
+
+    <div class="sim"><b>BROWSER SIMULATION: this is NOT the 24/7 paper bot's actual trades or balance.</b> This page runs its own paper simulation in your browser, recomputed on every page load from the start time below using Binance public price history, so its numbers can differ from the bot's (the bot switched rules and timeframes during its run; this page applies one rule from the start). No exchange keys are used and no orders are placed anywhere. Default: <b>Exit Arrows, long-only</b>, $500 split equally across <b>the live bot's current coins</b> (its universe in bot.json, start time = the bot's start); BUY at the next bar open after a ▲ up arrow (close crosses above the Exit SSL HMA15), sell to cash after a ▼ down arrow. Indicator = Mihkel00 SSL Hybrid, TradingView Pine v6 (WMA ATR smoothing), identical to the bot's ssl_core.py. Fees 0.1% per side.</div>
+    <div class="pload" id="pLoad" role="status" aria-live="polite"><span class="spin"></span><div style="flex:1;min-width:0"><div id="pLoadT">Loading price history…</div><div class="bar"><i id="pLoadB"></i></div></div></div>
+    <div class="card">
+      <div class="simtag">Browser simulation · not the bot's actual trades</div>
+      <div class="phead"><div><div class="meta">Simulated paper balance (marked to the live price)</div><div class="big" id="pBal">–</div><div id="pPnl" class="meta"></div></div>
+      <div class="cd">Next <span id="pCdTf">15m</span> bar close in<br><b id="pCd">–</b><div id="pCdAt"></div></div></div>
+      <div id="pErr" class="err"></div>
+    </div>
+    <div class="card"><div class="legend"><span><i class="dot" style="background:#22c55e"></i>Paper equity since start (USD)</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold same coins</span></div><div id="ppc"></div></div>
+    <div class="newsig" id="pNew"></div>
     <div class="card">
       <div class="pform">
         <label>Start time (WIB)<input id="pStart" type="datetime-local" step="60"></label>
@@ -258,20 +284,12 @@ body.onBot .ctl{display:none}
         <div class="full"><div class="chips" id="pChips"></div></div>
       </div>
       <div class="meta" id="pSetup" style="margin-top:8px"></div>
-      <div id="pErr" class="err"></div>
-    </div>
-    <div class="newsig" id="pNew"></div>
-    <div class="card">
-      <div class="simtag">Browser simulation · not the bot's actual trades</div>
-      <div class="phead"><div><div class="meta">Simulated paper balance (marked to the live price)</div><div class="big" id="pBal">–</div><div id="pPnl" class="meta"></div></div>
-      <div class="cd">Next <span id="pCdTf">15m</span> bar close in<br><b id="pCd">–</b><div id="pCdAt"></div></div></div>
     </div>
     <div class="card"><div class="h3">Coins · Exit Arrow state</div><div class="tblwrap"><table id="pCoins"><thead><tr><th>Coin<span class="sub">price</span></th><th>Position<span class="sub">Exit SSL</span></th><th>Last arrow<span class="sub">bar open WIB</span></th><th>Value $<span class="sub">P&amp;L</span></th></tr></thead><tbody></tbody></table></div><div class="meta" id="pCoinsNote"></div></div>
     <div class="card"><div class="h3">Chart · <span id="ppxTitle"></span></div><div class="pseg cseg" id="ppxSeg"></div>
       <div class="legend"><span><i class="dot" style="background:#3b82f6"></i>Baseline HMA60</span><span><i class="dot" style="background:#a78bfa"></i>Exit SSL HMA15</span><span><i class="dot" style="background:#f59e0b"></i>SSL1</span><span><i class="dot" style="background:#22d3ee"></i>SSL2 (JMA5)</span><span><b class="pos">▲</b>/<b class="neg">▼</b> Exit Arrows · <b style="color:#fde047">B</b>/<b style="color:#fde047">S</b> paper fills</span></div>
       <div id="ppx"></div><div class="meta" id="ppxNote"></div></div>
     <div class="card"><div class="h3">Open positions</div><div class="tblwrap"><table id="pPos"><thead><tr><th>Coin</th><th>Entry<span class="sub">time WIB</span></th><th>Now</th><th>Unreal. $<span class="sub">%</span></th><th>Bars</th></tr></thead><tbody></tbody></table></div><div class="meta" id="pPosNote"></div></div>
-    <div class="card"><div class="legend"><span><i class="dot" style="background:#22c55e"></i>Paper equity since start (USD)</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold same coins</span></div><div id="ppc"></div></div>
     <div class="card"><div class="h3">Trade log</div><div class="tblwrap"><table id="pLog"><thead><tr><th>Time WIB</th><th>Coin</th><th>Side</th><th>Price</th><th>$ P&amp;L<span class="sub">fee</span></th></tr></thead><tbody></tbody></table></div><div class="meta" id="pLogNote"></div></div>
   </section>
 
@@ -385,6 +403,8 @@ if (typeof module !== "undefined") module.exports = { indicator, backtest, metri
    It also recomputes the Exit Arrows on bars that closed after the export (same Pine v6 indicator() as the simulation)
    and shows a "pending" hint only; it never simulates trades into the bot's balance. */
 window.RB = (function () {
+  // highlight the bot's active timeframe (bot.json "tf") on the Real Bot 15m/1h/4h buttons
+  function tfMark() { document.querySelectorAll("#rbTfSeg button").forEach(b => b.classList.toggle("on", !!D && b.dataset.tf === D.tf)); }
   const $ = id => document.getElementById(id);
   const STALE_MIN = 25, TFMS = { "15m": 9e5, "1h": 36e5, "4h": 144e5 }, PRICE_MS = 5000;
   const PX_SRC = [["api.binance.com", "https://api.binance.com/api/v3"], ["data-api.binance.vision", "https://data-api.binance.vision/api/v3"]];
@@ -513,18 +533,24 @@ window.RB = (function () {
     $("rbPill").className = "pill " + (st === "RUNNING" ? "run" : st === "PAUSED" ? "pau" : "stp"); $("rbPillT").textContent = st;
     $("rbStalePill").classList.toggle("hide", !stale); $("rbStale").classList.toggle("hide", !stale);
     if (stale) $("rbStale").textContent = `STALE: the last export is ${ageMin >= 120 ? (ageMin / 60).toFixed(1) + " h" : Math.round(ageMin) + " min"} old (expected every 10 min). The box or its publisher may be offline, so the status and positions below may be out of date (prices are still live).`;
-    $("rbMode").innerHTML = `${esc(D.mode)} · <b>${esc(D.tf)}</b> · <span class="szp sig">${esc(D.signal_timing_text || "Signals: on candle close")}</span> · since ${esc(D.start_wib)} WIB` + (D.pool ? ` <span class="szp">Max positions ${D.pool.max_positions} · pool sizing · ${D.pool.slots_used}/${D.pool.max_positions}</span>` : "");
+    const rf = D.rsi_filter;
+    const rsiTxt = D.rsi_filter_text || (rf ? (rf.enabled ? `RSI(${rf.length || 14}) filter: Long <${rf.long_below ?? 35} / Short >${rf.short_above ?? 65}` : `RSI(${rf.length || 14}) filter: OFF`) : "RSI(14) filter: Long <35 / Short >65");
+    $("rbMode").innerHTML = `${esc(D.mode)} · <b>${esc(D.tf)}</b> · <span class="szp sig">${esc(rsiTxt)}</span> · <span class="szp sig">${esc(D.signal_timing_text || "Signals: on candle close")}</span> · since ${esc(D.start_wib)} WIB` + (D.pool ? ` <span class="szp">Max positions ${D.pool.max_positions} · pool sizing · ${D.pool.slots_used}/${D.pool.max_positions}</span>` : "");
+    if ($("rbRsiLine")) $("rbRsiLine").textContent = rsiTxt + " (entries only; exits unchanged)";
     let det = st === "RUNNING" ? "Bot alive" + (num(D.hb_age_s) ? `, heartbeat ${Math.round(D.hb_age_s)} s before the export` : "") : (D.status_detail || "");
     if (D.paused) det = `Paused since ${D.paused.since_wib} WIB: ${D.paused.reason}. No new entries; exits still follow the rules.`;
     $("rbDetail").textContent = det + (D.heartbeat_wib ? ` (last heartbeat ${D.heartbeat_wib.slice(11, 19)} WIB)` : "");
-    $("rbExp").textContent = wib(D.exported_ms); $("rbAgo").textContent = `(${ageMin < 1 ? "<1" : Math.round(ageMin)} min ago)`;
+    $("rbExp").textContent = wib(D.exported_ms);
+
+    document.querySelectorAll("#rbTfSeg button").forEach(b => b.classList.toggle("on", b.dataset.tf === D.tf));
+ $("rbAgo").textContent = `(${ageMin < 1 ? "<1" : Math.round(ageMin)} min ago)`;
     document.querySelectorAll("#vBot .asof").forEach(e => e.textContent = WIBH.format(new Date(D.positions_as_of_ms || D.exported_ms)));
     const tb = TFMS[D.tf] || 9e5, now = Date.now(), nx = Math.ceil((now + 1) / tb) * tb, s = Math.round((nx - now) / 1000);
     $("rbTf").textContent = D.tf; $("rbCd").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; $("rbCdAt").textContent = "at " + WIBH.format(new Date(nx)) + " WIB";
     if (onBot()) { $("upd").textContent = "Real bot · exported " + wib(D.exported_ms) + " WIB"; $("src").textContent = V && V.live ? "· live P&L" : ""; }
     liveBadge();
   }
-  function render() { header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) coin = D.coins[0] && D.coins[0].coin; coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
+  function render() { tfMark(); header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) coin = D.coins[0] && D.coins[0].coin; coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
 
   function numbers() {
     $("rbBal").textContent = usd(V.balance); $("rbBal").classList.remove("flash"); void $("rbBal").offsetWidth; if (V.live) $("rbBal").classList.add("flash");
@@ -557,17 +583,19 @@ window.RB = (function () {
     const mini = c => {
       const up = c.arrow === "up", la = c.live_arrow > 0 ? `<b class="pos">▲ live</b>` : c.live_arrow < 0 ? `<b class="neg">▼ live</b>` : c.arrow ? `<b class="${up ? "pos" : "neg"}">${up ? "▲" : "▼"}</b>${num(c.bars_since) ? c.bars_since : ""}` : "–";
       const p = pend[c.coin], pd = p && p.act ? `<div class="pd">⏳ ${IB ? "arrow after export" : "pending " + p.act}</div>` : "";
+      const rsiV = num(c.rsi) ? `<b class="${c.rsi < 35 ? "pos" : c.rsi > 65 ? "neg" : ""}">${c.rsi.toFixed(1)}</b>` : "–";
       return `<button class="cc mini${c.coin === coin ? " sel" : ""}${c.tradable === false ? " exl" : ""}" data-c="${esc(c.coin)}"><div class="t"><span class="n">${esc(c.coin)}</span><span>${la}</span></div>
         <div class="t m"><span>${px(c.price)}</span><span class="${num(c.vs_exit_pct) ? (c.vs_exit_pct >= 0 ? "pos" : "neg") : ""}" title="price vs Exit SSL line">${num(c.vs_exit_pct) ? pct(c.vs_exit_pct) : "–"}</span></div>
-        <div class="t m"><span>${c.rank ? "#" + c.rank : ""}</span><span>${c.trades ? c.trades + " tr" : ""}</span></div>${pd}</button>`;
+        <div class="t m"><span>RSI ${rsiV}</span><span>${c.rank ? "#" + c.rank : ""}${c.trades ? " · " + c.trades + "tr" : ""}</span></div>${pd}</button>`;
     };
     $("rbCards").innerHTML = held.map(c => {
       const up = c.arrow === "up", ar = c.arrow ? `<b class="${up ? "pos" : "neg"}">${up ? "▲" : "▼"}</b> ${esc((c.arrow_wib || "").slice(11))}${num(c.bars_since) ? ` (${c.bars_since} bars)` : ""}` : "no arrow";
       const ex = num(c.vs_exit_pct) ? `<span class="${c.vs_exit_pct >= 0 ? "pos" : "neg"}">${c.vs_exit_pct >= 0 ? "above" : "below"} exit ${pct(c.vs_exit_pct)}</span>` : "";
+      const rsiH = num(c.rsi) ? ` · RSI <b class="${c.rsi < 35 ? "pos" : c.rsi > 65 ? "neg" : ""}">${c.rsi.toFixed(1)}</b>` : "";
       const pl = c.pos === "long" ? `<span class="${cls(c.unreal)}">${usd(c.unreal, 1)} (${pct(c.unreal_pct)})</span><br>entry ${px(c.entry)}` + (num(c.tp_px) ? `<br><span class="pos">TP ${px(c.tp_px)}</span> ${pct(c.to_tp, 1)}<br><span class="neg">SL ${px(c.sl_px)}</span> ${pct(c.to_sl, 1)}` : "") : (D.pool ? "in pool cash" : `cash ${usd(c.value)}`);
       const p = pend[c.coin], pd = (c.hit ? `<div class="pd hit">⚠ ${c.hit} hit, bot will close</div>` : "") + (p && p.act ? `<div class="pd">⏳ pending: bot will ${p.act === "BUY" && D.pool && !D.pool.free_slots ? "skip (slots full)" : p.act} at next open</div>` : "");
       return `<button class="cc wide${c.coin === coin ? " sel" : ""}" data-c="${esc(c.coin)}"><div class="t"><span class="n">${esc(c.coin)}${c.rank ? ` <small class="meta">#${c.rank}</small>` : ""}</span><span class="${c.pos === "long" ? "tagL" : "tagC"}">${c.pos === "long" ? "LONG" : "CASH"}</span></div>
-        <div class="px">${px(c.price)}</div><div class="m">${pl}${c.entry_reason ? ` <span class="rs ${esc(c.entry_reason)}">${esc(c.entry_reason)}</span>` : ""}<br>Last ${ar}<br>${ex}</div>${pd}</button>`;
+        <div class="px">${px(c.price)}</div><div class="m">${pl}${c.entry_reason ? ` <span class="rs ${esc(c.entry_reason)}">${esc(c.entry_reason)}</span>` : ""}<br>Last ${ar}<br>${ex}${rsiH}</div>${pd}</button>`;
     }).join("") + rest.map(mini).join("");
     $("rbCards").querySelectorAll(".cc").forEach(b => b.onclick = () => { coin = b.dataset.c; localStorage.setItem("rbCoin", coin); cards(); coinChart(true); });
   }
@@ -620,7 +648,7 @@ window.RB = (function () {
   function cinfo() {
     const c = V && V.coins.find(x => x.coin === coin); if (!c) return;
     const I = [["Position", c.pos === "long" ? "LONG" : "CASH"], ["Price" + (c.live ? " · live" : ""), px(c.price)], ["Entry", c.pos === "long" ? px(c.entry) : "–"], ["Unrealised", c.pos === "long" ? usd(c.unreal, 1) + " · " + pct(c.unreal_pct) : "–"],
-      ["Exit line", px(c.exit_line)], ["Price vs exit", num(c.vs_exit_pct) ? pct(c.vs_exit_pct) + (c.above_exit ? " above" : " below") : "–"], ["Last arrow", c.arrow ? (c.arrow === "up" ? "▲ up " : "▼ down ") + (c.arrow_wib || "").slice(11) : "–"], ["Baseline", px(c.baseline)],
+      ["Exit line", px(c.exit_line)], ["Price vs exit", num(c.vs_exit_pct) ? pct(c.vs_exit_pct) + (c.above_exit ? " above" : " below") : "–"], ["RSI(14)", num(c.rsi) ? c.rsi.toFixed(1) : "–"], ["Last arrow", c.arrow ? (c.arrow === "up" ? "▲ up " : "▼ down ") + (c.arrow_wib || "").slice(11) : "–"], ["Baseline", px(c.baseline)],
       ["Units", num(c.units) ? String(+c.units.toPrecision(6)) : "–"], ...(num(c.tp_px) ? [["TP · to go", px(c.tp_px) + " · " + pct(c.to_tp)], ["SL · to go", px(c.sl_px) + " · " + pct(c.to_sl)], ["Net if sold", usd(c.net, 1)], ["Slot size", usd(c.size)]] : []), ["Realised", usd(c.realised, 1)], ["Value now", usd(c.value)], ["Buy & hold value", usd(c.bh_value)]];
     $("rbCinfo").innerHTML = I.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("");
   }
@@ -657,12 +685,13 @@ window.RB = (function () {
     $("rbSlots").innerHTML = sl.join("");
     $("rbPoolN").innerHTML = `One shared cash pool since ${esc((P.since_wib || "").slice(0, 16))} WIB. Size per trade = equity ÷ max positions, capped at pool cash. More up arrows than free slots at once → the strongest (close − exit line)/ATR wins. TP/SL checked by the bot every 5 s (sold at the level price), catch-up on bar high/low with SL first; after TP/SL a coin needs a new up arrow.` +
       (P.switches || []).map(s => `<br>${esc(s.at_wib.slice(5, 16))} ${esc(s.why)}: equity ${usd(s.equity_before)} → ${usd(s.equity_after)} (fee ${usd(s.fees)})`).join("");
-    $("rbSkip").innerHTML = (P.skipped || []).map(k => `<div class="skp">${esc((k.wib || "").slice(5))} · <b>${esc(k.coin)}</b> ▲ ${esc(k.tf || "")} skipped: ${esc(k.reason)} (${esc((k.held || []).join("+"))} held, strength ${num(k.strength) ? k.strength.toFixed(2) : "–"})</div>`).join("") || `<div class="meta">None yet (${P.n_skipped || 0}).</div>`;
+    $("rbSkip").innerHTML = (P.skipped || []).map(k => { const rsiS = num(k.rsi) ? ` · RSI ${k.rsi.toFixed(1)}` : ""; return `<div class="skp">${esc((k.wib || "").slice(5))} · <b>${esc(k.coin)}</b> ${(k.side || "long") === "short" ? "▼" : "▲"} ${esc(k.tf || "")} skipped: ${esc(k.reason)}${rsiS} (${esc((k.held || []).join("+"))} held, strength ${num(k.strength) ? k.strength.toFixed(2) : "–"})</div>`; }).join("") || `<div class="meta">None yet (${P.n_skipped || 0}).</div>`;
   }
   function rules() {
     const r = D.rules || {};
     const sw = [...(D.mode_switches || []).map(s => `${s.at} mode ${s.from}→${s.to}`), ...(D.tf_switches || []).map(s => `${s.at} timeframe ${s.from}→${s.to}`)].sort();
-    $("rbRules").innerHTML = `<b>Rules:</b> ${esc(D.mode_text || D.mode)}. Entry: ${esc(r.entry || "–")}. Exit: ${esc(r.exit || "–")}. Fill: ${esc(r.fill || "–")}. Fee ${num(r.fee) ? (r.fee * 100).toFixed(2) + "%" : "–"} per side. Capital ${usd(D.capital)} ${D.pool ? `traded as one pool (max ${D.pool.max_positions} positions, size = equity ÷ max positions capped at cash, TP +$${D.pool.tp_usd} / SL −$${D.pool.sl_usd} net per position) since ${esc((D.pool.since_wib || "").slice(0, 16))} WIB; before that split $100 per coin over` : "split over"} ZEC, NEAR, PEPE, SOL, XRP since ${esc(D.start_wib)} WIB${D.epoch_from_wib ? `; since ${esc(D.epoch_from_wib.slice(0, 16))} WIB the low-cap universe (${(D.universe || []).length} Binance USDT coins, CoinGecko top-${D.exclude_top_mcap || 50} by market cap excluded, re-checked daily): ${(D.universe || []).map(c => esc(c) + (D.universe_ranks && D.universe_ranks[c] ? " #" + D.universe_ranks[c].rank : "")).join(", ")}` : ""}. ${D.signal_timing === "intrabar" ? "Signals intrabar: every ~5 s the Exit SSL is recomputed on the forming candle with the live price as its close; an up arrow buys at once at the live price (ARROW_INTRABAR), a down arrow on a held coin sells at once; max one entry and one exit per coin per candle, no re-entry in the candle of an exit; an arrow that disappears before the close does not undo the fill." : ""} Bot prices: Bot prices: ${esc(D.source || "Binance")}.` +
+    const rsiRule = D.rsi_filter_text || (D.rsi_filter ? (D.rsi_filter.enabled ? `RSI(${D.rsi_filter.length || 14}) filter: Long <${D.rsi_filter.long_below} / Short >${D.rsi_filter.short_above}` : `RSI(${D.rsi_filter.length || 14}) filter: OFF`) : "–");
+    $("rbRules").innerHTML = `<b>Rules:</b> ${esc(D.mode_text || D.mode)}. Entry: ${esc(r.entry || "–")}. ${esc(rsiRule)}. Exit: ${esc(r.exit || "–")}. Fill: ${esc(r.fill || "–")}. Fee ${num(r.fee) ? (r.fee * 100).toFixed(2) + "%" : "–"} per side. Capital ${usd(D.capital)} ${D.pool ? `traded as one pool (max ${D.pool.max_positions} positions, size = equity ÷ max positions capped at cash, TP +$${D.pool.tp_usd} / SL −$${D.pool.sl_usd} net per position) since ${esc((D.pool.since_wib || "").slice(0, 16))} WIB; before that split $100 per coin over` : "split over"} ZEC, NEAR, PEPE, SOL, XRP since ${esc(D.start_wib)} WIB${D.epoch_from_wib ? `; since ${esc(D.epoch_from_wib.slice(0, 16))} WIB the low-cap universe (${(D.universe || []).length} Binance USDT coins, CoinGecko top-${D.exclude_top_mcap || 50} by market cap excluded, re-checked daily): ${(D.universe || []).map(c => esc(c) + (D.universe_ranks && D.universe_ranks[c] ? " #" + D.universe_ranks[c].rank : "")).join(", ")}` : ""}. ${D.signal_timing === "intrabar" ? "Signals intrabar: every ~5 s the Exit SSL is recomputed on the forming candle with the live price as its close; an up arrow buys at once at the live price (ARROW_INTRABAR), a down arrow on a held coin sells at once; max one entry and one exit per coin per candle, no re-entry in the candle of an exit; an arrow that disappears before the close does not undo the fill." : ""} Bot prices: Bot prices: ${esc(D.source || "Binance")}.` +
       (sw.length ? `<br><b>Switches:</b> ${sw.map(esc).join(" · ")}` : "") + `<br>Paper simulation only, not financial advice.`;
   }
 
@@ -684,10 +713,13 @@ const LOOKBACK_DAYS = {"15m":367,"1h":3*365+5,"4h":3*365+20,"1d":3*365+120,"1w":
 const SOURCES = [
   { name: "api.binance.com", url: "https://api.binance.com/api/v3/klines", iv: tf => tf, max: 1000 },
   { name: "data-api.binance.vision", url: "https://data-api.binance.vision/api/v3/klines", iv: tf => tf, max: 1000 },
-  { name: "api.mexc.com", url: "https://api.mexc.com/api/v3/klines", iv: tf => ({"1h":"60m","1w":"1W"}[tf] || tf), max: 500 },
+  { name: "api-gcp.binance.com", url: "https://api-gcp.binance.com/api/v3/klines", iv: tf => tf, max: 1000 },
+  { name: "api1.binance.com", url: "https://api1.binance.com/api/v3/klines", iv: tf => tf, max: 1000 },
+  { name: "api.gateio.ws", gate: true, url: "https://api.gateio.ws/api/v4/spot/candlesticks", iv: tf => ({"1w":"7d"}[tf] || tf), max: 1000 },   // last resort if every Binance host is blocked on this network
 ];
+const srcDown = {};   // source index -> ms until which it is skipped (timeout / network error), so one blocked host does not stall every request
 const S = Object.assign({ tf: "1h", dir: "long", ex: "baseline", tab: "pap", coin: "BTC", sort: "since", asc: true, cap: 500, auto: true }, JSON.parse(localStorage.getItem("sslh") || "{}"));
-S.tab = ({ "#sig": "sig", "#det": "det", "#pap": "pap" })[location.hash] || "bot";   // the Real bot tab is the default on every load
+S.tab = ({ "#pap": "pap" })[location.hash] || "bot";   // the Real bot tab is the default on every load
 const SETKEYS = ["tf", "dir", "ex", "cap", "coin"];
 const R = {}; SETKEYS.forEach(k => R[k] = S[k]);   // committed by ▶ Run; everything shown uses R
 const save = () => localStorage.setItem("sslh", JSON.stringify({ tf: S.tf, dir: S.dir, ex: S.ex, tab: S.tab, coin: S.coin, sort: S.sort, asc: S.asc, cap: S.cap, auto: S.auto }));
@@ -709,28 +741,49 @@ function pump() {
   pump();
 }
 async function getJSON(url) {
-  const ac = new AbortController(); const to = setTimeout(() => ac.abort(), 12000);
+  const ac = new AbortController(); const to = setTimeout(() => ac.abort(), 8000);
   try { const r = await fetch(url, { signal: ac.signal }); if (!r.ok) { const e = new Error("HTTP " + r.status); e.status = r.status; throw e; } return await r.json(); }
   finally { clearTimeout(to); }
 }
-async function klines(sym, tf, opts = {}) {
-  let lastErr;
+function pickSrc(tried) {   // chosen when the request actually starts, so hosts that failed meanwhile are skipped
+  const now = Date.now(); let later = -1;
   for (let k = 0; k < SOURCES.length; k++) {
-    const si = (srcIdx + k) % SOURCES.length, s = SOURCES[si];
-    const p = new URLSearchParams({ symbol: sym, interval: s.iv(tf), limit: String(Math.min(opts.limit || 1000, s.max)) });
+    const si = (srcIdx + k) % SOURCES.length; if (tried.has(si)) continue;
+    if ((srcDown[si] || 0) <= now) return si; if (later < 0) later = si;
+  }
+  return later;
+}
+function srcUrl(s, sym, tf, opts) {
+  const lim = Math.min(opts.limit || 1000, s.max), bar = TF_MS[tf] || 9e5; let p;
+  if (s.gate) {   // Gate.io: currency_pair, seconds; limit cannot be combined with from/to
+    p = new URLSearchParams({ currency_pair: sym.replace(/USDT$/, "_USDT"), interval: s.iv(tf) });
+    if (opts.startTime) { const f = Math.floor(opts.startTime / 1000); p.set("from", String(f)); p.set("to", String(Math.min(f + (lim - 1) * bar / 1000, Math.floor(Date.now() / 1000)))); }
+    else p.set("limit", String(lim));
+  } else {
+    p = new URLSearchParams({ symbol: sym, interval: s.iv(tf), limit: String(lim) });
     if (opts.startTime) p.set("startTime", String(opts.startTime));
+  }
+  return `${s.url}?${p}`;
+}
+async function klines(sym, tf, opts = {}) {
+  let lastErr; const tried = new Set(), bar = TF_MS[tf] || 9e5;
+  while (tried.size < SOURCES.length) {
+    let si = -1;
     try {
-      const raw = await throttled(() => getJSON(`${s.url}?${p}`));
-      sourceOK[s.name] = true;
+      const raw = await throttled(() => { si = pickSrc(tried); tried.add(si); return getJSON(srcUrl(SOURCES[si], sym, tf, opts)); });
+      const s = SOURCES[si]; sourceOK[s.name] = true; srcDown[si] = 0;
       if (si !== srcIdx) srcIdx = si;
+      if (s.gate) return raw.map(r => [Number(r[0]) * 1000, +r[5], +r[3], +r[4], +r[2], Number(r[0]) * 1000 + bar - 1]);
       return raw.map(r => [Number(r[0]), +r[1], +r[2], +r[3], +r[4], Number(r[6])]);
     } catch (e) {
-      lastErr = e; sourceOK[s.name] = false;
-      if (e.status === 400) throw new Error("Unknown symbol " + sym); // invalid symbol: don't try other hosts
+      if (si < 0) throw e;
+      const s = SOURCES[si]; lastErr = e; sourceOK[s.name] = false;
+      if (e.status === 400 && !s.gate) throw new Error("Unknown symbol " + sym); // invalid symbol: don't try other hosts
       if (e.status === 429 || e.status === 418) await new Promise(r => setTimeout(r, 2000));
+      else if (!e.status || e.status === 403 || e.status >= 451) { srcDown[si] = Date.now() + 120000; if (si === srcIdx) srcIdx = (si + 1) % SOURCES.length; }   // blocked / unreachable host
     }
   }
-  throw lastErr || new Error("all sources failed");
+  throw new Error(lastErr && lastErr.name === "AbortError" ? "price servers timed out" : lastErr && !lastErr.status ? "price servers unreachable (" + (lastErr.message || "network") + ")" : (lastErr && lastErr.message) || "all sources failed");
 }
 function toData(rows) {
   const now = Date.now();
@@ -764,13 +817,14 @@ seg($("tfSeg"), TFS.map(t => [t, t]), "tf", markStale);
 seg($("dirSeg"), [["long", "Long-only"], ["ls", "Long+Short"]], "dir", markStale);
 seg($("exSeg"), [["baseline", "Baseline exit"], ["exitssl", "Exit SSL"]], "ex", markStale);
 function setTab(t, load = true) {
+  t = t === "pap" ? "pap" : "bot";   // only two tabs: Simulation (pap) and Real Bot (everything else)
   S.tab = t; save();
-  [["bot", "tabBot", "vBot"], ["sig", "tabSig", "vSig"], ["det", "tabDet", "vDet"], ["pap", "tabPap", "vPap"]].forEach(([k, b, v]) => { $(b).className = t === k ? "on" : ""; $(v).className = t === k ? "" : "hide"; });
+  [["bot", "tabBot", "vBot"], ["pap", "tabPap", "vPap"]].forEach(([k, b, v]) => { $(b).className = t === k ? "on" : ""; $(v).className = t === k ? "" : "hide"; });
   document.body.classList.toggle("onPaper", t === "pap"); document.body.classList.toggle("onBot", t === "bot");
   if (typeof markStale === "function") markStale();
   if (load) ensureView();
 }
-$("tabBot").onclick = () => setTab("bot"); $("tabSig").onclick = () => setTab("sig"); $("tabDet").onclick = () => setTab("det"); $("tabPap").onclick = () => setTab("pap");
+$("tabBot").onclick = () => setTab("bot");   $("tabPap").onclick = () => setTab("pap");
 COINS.forEach(c => { const o = document.createElement("option"); o.value = c; o.textContent = c + "/USDT"; $("coinSel").appendChild(o); });
 function selectCoin(c) {
   if (!COINS.includes(c) && ![...$("coinSel").options].some(o => o.value === c)) { const o = document.createElement("option"); o.value = c; o.textContent = c + "/USDT"; $("coinSel").appendChild(o); }
@@ -934,13 +988,27 @@ let BAR = 9e5; const PRE_BARS = 1000;   // bar size of the committed paper timef
 const wibToMs = s => { const m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(s || ""); return m ? Date.UTC(+m[1], m[2]-1, +m[3], +m[4], +m[5]) - 7*36e5 : NaN; };
 const msToWibInput = ms => new Date(ms + 7*36e5).toISOString().slice(0, 16);
 const WIBS = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jakarta", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
-const P = Object.assign({ start: "2026-10-27T07:52", cap: 500, mode: "pf", sel: PAPER_DEF.slice(), tf: "15m", rule: "arrow_long" }, JSON.parse(localStorage.getItem("sslh_paper2") || "{}"));
-if (!PTF_MS[P.tf]) P.tf = "15m"; if (!RULES[P.rule]) P.rule = "arrow_long";
+// Default portfolio = the live bot's current coins and start time (./bot.json "universe" / "start_wib"), refreshed on every run.
+// P.bot = true follows the bot; ticking chips by hand switches to a custom selection (the "Bot coins" chip switches back).
+// Settings key bumped to sslh_paper3 so phones that saved the old top-50 defaults (sslh_paper2) pick up the bot's coins.
+let BOTU = null, botuT = 0;   // {coins, start, tf}
+async function botUniverse() {
+  if (BOTU && Date.now() - botuT < 300000) return BOTU;
+  try {
+    const r = await fetch("./bot.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error(r.status);
+    const j = await r.json(), u = (j.universe || []).filter(c => /^[A-Z0-9]+$/.test(c));
+    if (u.length) { BOTU = { coins: u, start: /^\d{4}-\d\d-\d\d \d\d:\d\d/.test(j.start_wib || "") ? j.start_wib.slice(0, 16).replace(" ", "T") : null, tf: j.tf }; botuT = Date.now(); }
+  } catch (e) { }
+  return BOTU;
+}
+const P = Object.assign({ start: "2026-10-27T07:52", startSet: false, cap: 500, mode: "pf", bot: true, sel: PAPER_DEF.slice(), tf: "15m", rule: "arrow_long" }, JSON.parse(localStorage.getItem("sslh_paper3") || "{}"));
+if (!PTF_MS[P.tf]) P.tf = "15m"; if (!RULES[P.rule]) P.rule = "arrow_long"; if (!Array.isArray(P.sel) || !P.sel.length) P.sel = PAPER_DEF.slice();
+function applyBot(o) { if (BOTU && o.bot) { o.sel = BOTU.coins.slice(); if (!o.startSet && BOTU.start) o.start = BOTU.start; } return o; }
 const PR = JSON.parse(JSON.stringify(P));   // committed paper settings (applied by ▶ Run)
-const savePaper = () => localStorage.setItem("sslh_paper2", JSON.stringify(P));
-const papKey = o => [o.start, o.cap, o.mode, o.mode === "pf" ? o.sel.join(",") : "", o.tf, o.rule].join("|");
+const savePaper = () => localStorage.setItem("sslh_paper3", JSON.stringify(P));
+const papKey = o => [o.startSet || !o.bot ? o.start : "bot", o.cap, o.mode, o.mode === "pf" ? (o.bot ? "bot" : o.sel.join(",")) : "", o.tf, o.rule].join("|");
 const papCoins = o => o.mode === "pf" ? o.sel.slice() : [o.mode];
-const papText = o => `Browser sim · ${o.tf} · Long-only · ${RULES[o.rule]} · ${fmtUsd(o.cap)} · ${o.mode === "pf" ? "Portfolio " + o.sel.join("+") : o.mode} · from ${o.start.replace("T", " ")} WIB`;
+const papText = o => `Browser sim · ${o.tf} · Long-only · ${RULES[o.rule]} · ${fmtUsd(o.cap)} · ${o.mode === "pf" ? (o.bot ? `the live bot's ${o.sel.length} coins: ` : "Portfolio ") + o.sel.join(o.bot ? ", " : "+") : o.mode} · from ${o.start.replace("T", " ")} WIB`;
 const papRun = { key: null, n: 0, total: 0 }, papCache = {};   // sym -> {from, rows}
 let ppChart = null, ppEq = null, ppBh = null, papLast = null, pxChart = null, pxS = {}, pxCoin = null;
 
@@ -948,25 +1016,31 @@ function paperForm() {
   $("pStart").value = P.start; $("pCap").value = P.cap;
   const opts = [["pf", "Portfolio: split capital equally across selected coins"]].concat(COINS.map(c => [c, c + "/USDT only"]));
   $("pMode").innerHTML = opts.map(([v, l]) => `<option value="${v}">${l}</option>`).join(""); $("pMode").value = P.mode;
-  $("pChips").innerHTML = PAPER_COINS.map(c => `<label><input type="checkbox" value="${c}" ${P.sel.includes(c) ? "checked" : ""}>${c}</label>`).join("");
+  applyBot(P);
+  const chips = [...new Set(BOTU ? BOTU.coins.concat(P.sel, ["BTC", "ETH"]) : P.sel.concat(PAPER_COINS))];
+  $("pChips").innerHTML = (BOTU ? `<label class="botc"><input type="checkbox" value="__bot" ${P.bot ? "checked" : ""}>Bot coins (${BOTU.coins.length})</label>` : "") +
+    chips.map(c => `<label><input type="checkbox" value="${c}" ${P.sel.includes(c) ? "checked" : ""}>${c}</label>`).join("");
   $("pChips").classList.toggle("off", P.mode !== "pf");
   $("pRule").innerHTML = Object.entries(RULES).map(([v, l]) => `<option value="${v}">${l}${v === "arrow_long" ? " · default" : ""}</option>`).join(""); $("pRule").value = P.rule;
   $("pTfSeg").innerHTML = Object.keys(PTF_MS).map(t => `<button type="button" data-tf="${t}" class="${P.tf === t ? "on" : ""}">${t}</button>`).join("");
   $("pTfSeg").querySelectorAll("button").forEach(b => b.onclick = e => { e.preventDefault(); P.tf = b.dataset.tf; paperChanged(); });
 }
 function paperChanged() {
-  const st = $("pStart").value; if (isFinite(wibToMs(st))) P.start = st;
+  const st = $("pStart").value; if (isFinite(wibToMs(st)) && st !== P.start) { P.start = st; P.startSet = true; }
   const v = parseFloat($("pCap").value); P.cap = isFinite(v) && v > 0 ? v : 500;
   P.mode = $("pMode").value; P.rule = RULES[$("pRule").value] ? $("pRule").value : "arrow_long";
-  const sel = [...$("pChips").querySelectorAll("input:checked")].map(i => i.value);
-  P.sel = sel.length ? PAPER_COINS.filter(c => sel.includes(c)) : P.sel;   // keep at least one coin
+  const bi = $("pChips").querySelector('input[value="__bot"]'), wasBot = P.bot;
+  const sel = [...$("pChips").querySelectorAll("input:checked")].map(i => i.value).filter(v => v !== "__bot");
+  if (bi && bi.checked && !wasBot) { P.bot = true; applyBot(P); }   // "Bot coins" ticked: follow the live bot again
+  else if (bi && !bi.checked && wasBot) P.bot = false;
+  else if (sel.join(",") !== P.sel.join(",")) { P.bot = false; P.sel = sel.length ? sel : P.sel; }   // a coin chip changed: custom selection (keep at least one coin)
   savePaper(); paperForm(); markStale();
 }
 ["pStart", "pCap", "pMode", "pRule"].forEach(id => $(id).addEventListener("change", paperChanged));
 $("pChips").addEventListener("change", paperChanged);
 $("pReset").onclick = () => {
   if (!confirm("Restart the paper test from now? The current paper results will be replaced (it is only a simulation).")) return;
-  P.start = msToWibInput(Date.now()); savePaper(); paperForm(); runNow();
+  P.start = msToWibInput(Date.now()); P.startSet = true; savePaper(); paperForm(); runNow();
 };
 
 async function paperRows(sym, startMs, tf) {
@@ -1043,20 +1117,32 @@ function paperCoin(rows, startMs, coinCap, rule) {
   res.liveBh = coinCap*live/ds.c[WARMUP];
   return res;
 }
+function papStatus(txt, frac) {   // the visible loading / progress state of the Simulation tab
+  $("pLoad").classList.toggle("on", !!txt); if (txt) $("pLoadT").textContent = txt;
+  $("pLoadB").style.width = Math.round(100 * Math.max(0, Math.min(1, frac || 0))) + "%";
+}
 async function loadPaper() {
+  const quiet = runMode === "auto" && papLast;   // the 60 s refresh keeps the shown results and only shows a small note
+  if (PR.bot && PR.mode === "pf") { if (!quiet) papStatus("Loading the live bot's coins…", 0.02); await botUniverse(); if (BOTU) { applyBot(PR); applyBot(P); paperForm(); } }
   const o = JSON.parse(JSON.stringify(PR)), startMs = wibToMs(o.start), coins = papCoins(o), cc = o.cap/coins.length;
   BAR = PTF_MS[o.tf] || 9e5;
-  $("pErr").textContent = ""; papRun.n = 0; papRun.total = coins.length; runProgress();
+  $("pErr").textContent = ""; papRun.n = 0; papRun.total = coins.length;
+  const t0 = Date.now(), prog = () => papStatus(quiet ? "" : `Loading ${o.tf} price history in your browser… ${papRun.n}/${coins.length} coins · ${Math.round((Date.now() - t0) / 1000)} s (${PRE_BARS} warm-up bars each, via ${SOURCES[srcIdx].name}${Object.values(srcDown).some(v => v > Date.now()) ? ", a price host did not answer, trying backups" : ""})`, 0.05 + 0.95 * papRun.n / Math.max(1, coins.length));
+  const progT = setInterval(prog, 1000);
+  if (!papLast) { $("pBal").textContent = "Loading…"; $("pBal").className = "big"; $("pPnl").textContent = "Fetching price history for " + coins.length + " coin" + (coins.length === 1 ? "" : "s") + "…"; }
+  prog();
   if (!isFinite(startMs)) { $("pErr").textContent = "Invalid start time."; return; }
   if (Date.now() - startMs > 120*864e5) { $("pErr").textContent = "Start time must be within the last 120 days."; return; }
   const errs = [], out = {};
   await Promise.all(coins.map(async c => {
     try { out[c] = paperCoin(await paperRows(c + "USDT", startMs, o.tf), startMs, cc, o.rule); out[c].coin = c; }
     catch (e) { errs.push(c + ": " + e.message); }
-    finally { papRun.n++; runProgress(); }
-  }));
-  if (errs.length) $("pErr").textContent = "Failed: " + errs.join(", ");
-  papLast = { o, startMs, coins, cc, out }; window.__paper = papLast; renderPaper(); papRun.key = papKey(o); stamp();
+    finally { papRun.n++; prog(); }
+  })).finally(() => clearInterval(progT));
+  papStatus("");
+  if (errs.length) $("pErr").textContent = (errs.length === coins.length ? "Could not load any price history (Binance and the backup hosts did not answer from this network). Will retry on the next refresh. " : "Failed: ") + errs.join(", ");
+  if (errs.length === coins.length && papLast) return;   // keep the last good result on screen
+  papLast = { o, startMs, coins, cc, out }; window.__paper = papLast; renderPaper(); papRun.key = errs.length === coins.length ? null : papKey(o); stamp();
 }
 function renderPaper() {
   if (!papLast) return;
@@ -1166,22 +1252,22 @@ function setupText(o) { return `${o.tf} · ${o.dir === "ls" ? "Long+Short" : "Lo
 function isStale() { return S.tab === "bot" ? false : S.tab === "pap" ? papKey(P) !== papKey(PR) : SETKEYS.some(k => S[k] !== R[k]); }
 var autoT = null;
 function autoRun(ms) { clearTimeout(autoT); autoT = setTimeout(() => { if (S.tab !== "bot" && isStale()) runNow(); }, ms || 450); }   // any settings change re-runs by itself
-function markStale() { if (S.tab !== "bot" && isStale()) autoRun(); document.body.classList.toggle("isStale", isStale()); $("runBtn").classList.toggle("attn", isStale()); $("runSetup").textContent = "Showing: " + (S.tab === "pap" ? papText(PR) : setupText(R)); }
+function markStale() { if (S.tab !== "bot" && isStale()) autoRun(); document.body.classList.toggle("isStale", isStale()); /* runBtn removed */ $("runSetup").textContent = "Showing: " + (S.tab === "pap" ? papText(PR) : setupText(R)); }
 function runProgress() {
   if (!running) return;
-  if (runTab === "pap") { $("runLab").textContent = papRun.total ? `Running… ${papRun.n}/${papRun.total} coins` : "Running…"; return; }
+  if (runTab === "pap") { /* */ return; }
   const det = runTab === "det";
-  $("runLab").textContent = det ? (detRun.total ? `Running… ${detRun.n}/${detRun.total} batches` : "Running…") : `Running… ${sigRun.n}/${sigRun.total} coins`;
+  /* */
 }
 function work(mode) {   // mode: "run" (button / first load) or "auto" (60 s refresh)
   const p = (async () => {
-    runMode = mode; runTab = S.tab; $("runBtn").disabled = true; $("refresh").disabled = true; runProgress();
+    runMode = mode; runTab = S.tab; /* */ $("refresh").disabled = true; runProgress();
     try {
-      if (runTab === "pap") await loadPaper();
+      if (runTab === "pap") await loadPaper().catch(e => { papStatus(""); $("pErr").textContent = "Simulation error: " + (e && e.message || e); console.error(e); });
       else if (runTab === "det") await loadDetail(mode === "run" ? true : !pChart);
       else await loadSignals();
       if (mode === "run") $("runInfo").textContent = "Last run: " + WIB.format(new Date()) + " WIB";
-    } finally { running = null; $("runBtn").disabled = false; $("refresh").disabled = false; $("runLab").textContent = "↻ Re-run"; markStale(); }
+    } finally { running = null; /* */ $("refresh").disabled = false; /* */ markStale(); }
   })();
   running = p; return p;
 }
@@ -1203,10 +1289,27 @@ function ensureView() {   // a tab switch shows the last run; it only fetches if
   if (S.tab === "pap") { if (papRun.key !== papKey(PR)) work("run"); return; }
   if ((S.tab === "det" ? detRun.key : sigRun.key) !== k) work("run");
 }
-$("runBtn").onclick = () => runNow();
+/* runBtn removed */
 $("autoIn").checked = !!S.auto;
 $("autoIn").onchange = () => { S.auto = $("autoIn").checked; save(); };
 S.auto = true; save();   // auto-refresh is always on at page load
+
+// Real Bot TF selector: the page is static and holds no tokens, so a tap opens control/tf.json in GitHub's editor.
+// Commit {"tf":"1h",...} there; the box polls that file every ~60 s and switches the paper bot live.
+const TF_EDIT_URL = "https://github.com/dedkovic441-hub/ssl-hybrid-dashboard/edit/main/control/tf.json";
+document.querySelectorAll("#rbTfSeg button").forEach(btn => {
+  btn.onclick = () => {
+    const tf = btn.dataset.tf;
+    if (!["15m", "1h", "4h"].includes(tf)) return;
+    const note = document.getElementById("rbTfNote");
+    if (note) {
+      note.textContent = (btn.classList.contains("on") ? tf + " is already active. " : "Requested " + tf + ": ") + "Set tf to 15m, 1h or 4h and commit; the bot switches within ~1 min.";
+      note.setAttribute("role", "status"); note.setAttribute("aria-live", "polite");
+    }
+    window.open(TF_EDIT_URL, "_blank", "noopener");
+  };
+});
+
 selectCoin(S.coin); setTab(S.tab, false); markStale();
 if (S.tab === "bot") RB.show(); else runNow();   // first load: run with the saved (or default) settings so the page is never empty
 setInterval(() => { if (S.auto && !document.hidden) refreshAll(); }, 60000);

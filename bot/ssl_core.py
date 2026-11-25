@@ -42,6 +42,27 @@ def hma(x, n):
         idx = np.argmax(ok); out[idx:] = wma(a[idx:], m)
     return out
 
+def rsi(x, n=14):
+    """Wilder / RMA RSI matching TradingView ta.rsi(src, length)."""
+    n = int(n)
+    x = np.asarray(x, dtype=float)
+    out = np.full(len(x), np.nan)
+    if len(x) <= n or n < 1:
+        return out
+    diff = np.diff(x)
+    up = np.maximum(diff, 0.0)
+    dn = np.maximum(-diff, 0.0)
+    au = float(np.mean(up[:n]))
+    ad = float(np.mean(dn[:n]))
+    out[n] = 100.0 if ad == 0.0 else (0.0 if au == 0.0 else 100.0 - 100.0 / (1.0 + au / ad))
+    a = 1.0 / n
+    b = 1.0 - a
+    for i in range(n, len(diff)):
+        au = a * up[i] + b * au
+        ad = a * dn[i] + b * ad
+        out[i + 1] = 100.0 if ad == 0.0 else (0.0 if au == 0.0 else 100.0 - 100.0 / (1.0 + au / ad))
+    return out
+
 def ema(x, n):
     return pd.Series(x).ewm(span=n, adjust=False).mean().values
 
@@ -83,7 +104,7 @@ def last_state(ev):
         st[i] = cur
     return st
 
-def indicator(df):
+def indicator(df, rsi_len=14):
     o, h, l, c = (df[k].values for k in "ohlc")
     base = hma(c, 60)
     rangema = ema(np.nan_to_num(true_range(h, l, c), nan=h[0]-l[0]), 60)
@@ -109,7 +130,7 @@ def indicator(df):
                 long_sig=long_sig, short_sig=short_sig, exit_long=exit_long, exit_short=exit_short,
                 ssl1=ssl1_st, ssl2=ssl2_st, ssl1_line=ssl1_line, ssl2_line=ssl2_line,
                 arrow=arrow, arrow_state=last_state(arrow), atr=atr, atr_up=atr_up, atr_lo=atr_lo,
-                diamond=diamond, buy_atr=buy_atr, sell_atr=sell_atr)
+                diamond=diamond, buy_atr=buy_atr, sell_atr=sell_atr, rsi=rsi(c, rsi_len))
 
 def arrow_ind(ind):
     """arrow_long research variant: up arrow = long signal, down arrow = exit to cash."""

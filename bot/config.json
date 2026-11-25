@@ -190,5 +190,13 @@
    "name": "PancakeSwap",
    "days": 2077
   }
+ },
+ "entry_filter_2pct": false,
+ "sides": "ls",
+ "rsi_filter": {
+  "enabled": true,
+  "length": 14,
+  "long_below": 35,
+  "short_above": 65
  }
 }
