@@ -51,15 +51,15 @@ tr.fresh{background:rgba(245,158,11,.12)}
 .note{font-size:12px;color:var(--mut);margin-top:14px}
 .err{color:var(--dn);font-size:13px}
 .hide{display:none}
-/* runBtn removed */
-/* */
-/* */
+.runbar{display:flex;gap:8px;align-items:stretch}
+#runBtn{flex:1;min-height:54px;font-size:19px;font-weight:700;background:#16a34a;border-color:#16a34a;color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(22,163,74,.35)}
+#runBtn:disabled{background:#14532d;border-color:#14532d;color:#bbf7d0;cursor:wait;box-shadow:none}
 #runBtn.attn{animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
 .spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:rot .8s linear infinite;display:none}
-/* */
+#runBtn:disabled .spin{display:inline-block}
 @keyframes rot{to{transform:rotate(360deg)}}
-.auto{display:none}
+.auto{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:13px;color:var(--mut);white-space:nowrap;cursor:pointer;min-height:54px}
 .auto input{width:22px;height:22px;min-height:0;accent-color:#16a34a;margin:0}
 .runinfo{font-size:12px;color:var(--mut);margin-top:-2px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .stale{display:none;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.5);color:var(--warn);border-radius:10px;padding:9px 12px;font-size:14px;font-weight:600}
@@ -84,10 +84,6 @@ body.onPaper #tfSeg,body.onPaper #dirSeg,body.onPaper #exSeg,body.onPaper .ctl>.
 .newsig{display:none;background:rgba(245,158,11,.16);border:1px solid var(--warn);color:var(--warn);border-radius:10px;padding:9px 12px;font-weight:650;font-size:14px;margin-bottom:10px;animation:pulse2 1.6s ease-in-out infinite}
 @keyframes pulse2{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.5)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
 #ppc{height:230px}#ppx{height:330px}
-.pload{display:none;align-items:center;gap:10px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.45);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;margin-bottom:10px}
-.pload.on{display:flex}.pload .spin{display:inline-block;flex:none;border-color:rgba(147,197,253,.35);border-top-color:#93c5fd}
-.pload .bar{height:4px;background:rgba(255,255,255,.12);border-radius:3px;margin-top:6px;overflow:hidden}.pload .bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .25s}
-.chips label.botc{border-color:var(--acc)}
 .simtag{display:inline-block;background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.55);color:var(--warn);border-radius:8px;padding:2px 8px;font-size:11.5px;font-weight:650;margin-bottom:6px}
 .pseg{display:flex;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;min-height:44px}
 .pseg button{flex:1;border:0;background:transparent;min-height:36px;padding:0 6px;border-radius:8px;color:var(--mut);white-space:nowrap}
@@ -104,11 +100,7 @@ body.isStale #vSig .card,body.isStale #vDet .card{opacity:.45;transition:opacity
 .cap input{width:130px;text-align:right;font-variant-numeric:tabular-nums}
 @media(min-width:760px){.pform{grid-template-columns:1.3fr 1fr 1fr 1fr}#ppc{height:280px}#ppx{height:420px}.ctl{grid-template-columns:1.4fr 1fr 1fr 1fr}.runbar,.runinfo,.stale{grid-column:1/-1}.kpis{grid-template-columns:repeat(4,1fr)}#pc{height:440px}#ec{height:260px}}
 /* ---- Real bot tab ---- */
-.rb-tf{display:flex;gap:6px;margin:8px 0}
-.rb-tf button{flex:1;min-height:40px;font-size:14px;font-weight:600}
-.rb-tf button.on{background:var(--acc);border-color:var(--acc);color:#fff}
-
-/* controls moved inside Simulation tab */
+body.onBot .ctl{display:none}
 #tabBot{font-weight:650}
 .rbtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 12px;font-weight:750;font-size:13px;letter-spacing:.04em}
@@ -132,8 +124,15 @@ body.isStale #vSig .card,body.isStale #vDet .card{opacity:.45;transition:opacity
 .cc .m{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.35;overflow-wrap:anywhere}
 .tagL{background:rgba(34,197,94,.18);color:var(--up);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
 .tagC{background:rgba(138,147,166,.18);color:var(--mut);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:750}
-#rbEq{height:200px;max-width:none;aspect-ratio:auto;margin:0}#rbPx{height:340px}
-#rbEq,#rbPx{width:100%;overflow:hidden}
+#rbEq{height:200px;max-width:none;aspect-ratio:auto;margin:0}#rbPx{height:240px}#rbRsi{height:100px}
+#rbEq,#rbPx,#rbRsi{width:100%;overflow:hidden}
+.rsihead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:6px 0 2px;font-size:11.5px;color:var(--mut)}
+.rsihead b{font-variant-numeric:tabular-nums;font-size:14px;color:var(--tx)}
+.rsihead b.pos{color:var(--up)}.rsihead b.neg{color:var(--dn)}
+.rbRsiNow{font-weight:700;font-variant-numeric:tabular-nums;margin-left:8px}
+.rbRsiNow.pos{color:var(--up)}.rbRsiNow.neg{color:var(--dn)}
+#rbHeadCard{padding-bottom:10px}#rbHeadCard .rbinfo{display:none}
+#rbChartCard .legend{font-size:11.5px;line-height:1.45}
 .flt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .flt select{flex:1;min-width:0}
 .flt .pseg{flex:1.4;min-width:0}
@@ -170,7 +169,7 @@ body.isStale #vSig .card,body.isStale #vDet .card{opacity:.45;transition:opacity
 .skp{font-size:12px;padding:5px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 .ev .k.skip{background:rgba(245,158,11,.16);color:#fbbf24}.ev .k.tpsl{background:rgba(239,68,68,.16);color:#fca5a5}.ev .k.resize{background:rgba(59,130,246,.18);color:#93c5fd}
 @media(min-width:760px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:760px){.ccards{grid-template-columns:repeat(6,minmax(0,1fr))}.cc.wide{grid-column:span 3}#rbEq{height:220px;max-width:none}#rbPx{height:440px}.cinfo{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:760px){.ccards{grid-template-columns:repeat(6,minmax(0,1fr))}.cc.wide{grid-column:span 3}#rbEq{height:220px;max-width:none}#rbPx{height:320px}#rbRsi{height:130px}.cinfo{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .cc.wide{grid-column:1/-1}
 .cc.mini{padding:7px 9px;border-radius:10px}.cc.mini .n{font-size:14px}.cc.mini .m{margin-top:2px;font-variant-numeric:tabular-nums}.cc.mini .t.m{display:flex}
 .cc.exl{opacity:.55}.szp.sig{background:#1e3a8a;color:#bfdbfe}
@@ -184,48 +183,70 @@ body.isStale #vSig .card,body.isStale #vDet .card{opacity:.45;transition:opacity
   <div class="prog" id="prog"></div>
 </header>
 <main>
-  
-  <div id="tfSeg" style="display:none"></div>
-  <div id="dirSeg" style="display:none"></div>
-  <div id="exSeg" style="display:none"></div>
-  <input id="capIn" type="number" style="display:none" value="500">
-
-  <div id="runInfo" style="display:none"></div><div id="runSetup" style="display:none"></div><div id="staleMsg" class="stale" style="display:none"></div><input type="checkbox" id="autoIn" checked style="display:none">
-
+  <div class="ctl">
+    <div class="seg" id="tfSeg"></div>
+    <div class="seg" id="dirSeg"></div>
+    <div class="seg" id="exSeg"></div>
+    <div class="cap"><label for="capIn">Starting capital (USD)</label><input id="capIn" type="number" inputmode="decimal" min="1" step="50" value="500"></div>
+    <div class="runbar"><button id="runBtn" aria-label="Re-run now (optional, it runs automatically)"><span class="spin"></span><span id="runLab">↻ Re-run</span></button><label class="auto"><input type="checkbox" id="autoIn" checked>Auto-refresh 60s</label></div>
+    <div class="runinfo"><span id="runInfo">Last run: –</span><span id="runSetup"></span></div>
+    <div class="stale" id="staleMsg">Settings changed, updating automatically…</div>
+  </div>
   <div class="tabs">
     <button id="tabBot" class="on">Real Bot</button>
     <button id="tabPap">Simulation</button>
   </div>
 
-  <section id="vBot" class="hide">
-    <div class="card">
+  <section id="vBot">
+    <div class="card" id="rbHeadCard">
       <div class="rbtop"><span class="pill stp" id="rbPill"><i></i><span id="rbPillT">LOADING</span></span><span class="pill stale hide" id="rbStalePill">STALE</span><span class="meta" id="rbMode"></span></div>
       <div class="rbdet" id="rbDetail"></div>
       <div class="meta" id="rbRsiLine" style="margin-top:4px;font-weight:600"></div>
       <div class="rbstale hide" id="rbStale"></div>
-      <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
-      <div class="rb-tf" id="rbTfSeg">
-        <button type="button" data-tf="15m">15m</button>
-        <button type="button" data-tf="1h">1h</button>
-        <button type="button" data-tf="4h">4h</button>
-      </div>
-      <div class="meta" id="rbTfNote">Highlighted = the bot's active timeframe. Tap to change it on GitHub: set tf to 15m, 1h or 4h and commit; the bot switches within ~1 min.</div>
-      <div id="rbErr" class="err"></div>
-    </div>
-    <div class="card" style="text-align:center"><div class="h3">Equity vs buy & hold</div><div class="legend" style="justify-content:center"><span><i class="dot" style="background:#22c55e"></i>Bot</span><span><i class="dot" style="background:#8a93a6"></i>Buy & hold</span></div><div id="rbEq"></div></div>
-    <div class="card">
       <div class="livebar"><span class="live" id="rbLive"><i></i><span id="rbLiveT">CONNECTING</span></span><span class="meta" id="rbLiveAt">connecting to Binance…</span></div>
       <div class="phead"><div><div class="meta">Paper balance · live mark</div><div class="big" id="rbBal">–</div><div id="rbPnl" class="meta"></div></div>
       <div class="cd">Next <span id="rbTf">–</span> bar close<br><b id="rbCd">–</b><div id="rbCdAt"></div></div></div>
       <div class="kpis" id="rbKpis" style="margin-top:10px"></div><div class="meta" id="rbAsOf" style="margin-top:8px"></div>
     </div>
-    <div class="rbpend hide" id="rbPend"></div>
-    <div class="card hide" id="rbPoolC"><div class="h3">Pool <span class="meta" id="rbPoolH"></span></div><div class="slots" id="rbSlots"></div><div class="meta" id="rbPoolN" style="margin-top:6px"></div><div class="h3" style="margin-top:10px;font-size:14px">Skipped arrows <span class="meta">· slots full, not queued</span></div><div id="rbSkip"></div></div>
-    <div class="card"><div class="h3">Coins <span class="meta">· live prices · positions as of <span class="asof">–</span> · tap a coin for its chart</span></div><div class="ccards" id="rbCards"></div></div>
-    <div class="card" id="rbChartCard"><div class="h3">Chart · <span id="rbPxT">–</span></div><div class="pseg cseg" id="rbPxSeg"></div>
+    <div class="card" id="rbChartCard"><div class="h3">Chart · <span id="rbPxT">–</span> <span class="rbRsiNow" id="rbRsiNow"></span></div><div class="pseg cseg" id="rbPxSeg"></div>
       <div class="togs" id="rbTogs"></div>
-      <div class="legend"><span><i class="dot" style="background:#3b82f6"></i>Baseline</span><span><i class="dot" style="background:#64748b"></i>Channel</span><span><i class="dot" style="background:#a78bfa"></i>Exit line</span><span><i class="dot" style="background:#f59e0b"></i>SSL1</span><span><i class="dot" style="background:#22d3ee"></i>SSL2</span><span><b class="pos">▲</b>/<b class="neg">▼</b> Exit Arrows · <b style="color:#fde047">B</b>/<b style="color:#fde047">S</b> the bot's paper fills</span></div>
-      <div id="rbPx"></div><div class="cinfo" id="rbCinfo"></div><div class="meta" id="rbPxNote" style="margin-top:6px"></div></div>
+      <div class="legend"><span><i class="dot" style="background:#3b82f6"></i>Baseline</span><span><i class="dot" style="background:#64748b"></i>Channel</span><span><i class="dot" style="background:#a78bfa"></i>Exit line</span><span><i class="dot" style="background:#f59e0b"></i>SSL1</span><span><i class="dot" style="background:#22d3ee"></i>SSL2</span><span><b class="pos">▲ LONG</b> / <b class="neg">▼ SHORT</b> entries · <b>×</b> EXIT (P&amp;L) · faint arrows = RSI-skipped · <b class="pos">▲</b>/<b class="neg">▼</b> Exit Arrows</span></div>
+      <div id="rbPx"></div>
+      <div class="rsihead"><span>RSI(14) · active timeframe · guides at 35 / 65</span><b id="rbRsiVal">–</b></div>
+      <div id="rbRsi"></div>
+      <div class="cinfo" id="rbCinfo"></div><div class="meta" id="rbPxNote" style="margin-top:6px"></div></div>
+    <div class="card">
+      <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
+      <div class="rb-ctl">
+        <div class="rb-tf" id="rbTfSeg">
+          <button type="button" data-tf="15m">15m</button>
+          <button type="button" data-tf="1h">1h</button>
+          <button type="button" data-tf="4h">4h</button>
+        </div>
+        <div class="meta" id="rbTfNote">Highlighted = the bot's active timeframe. Tap a button to switch (15m, 1h or 4h). It should confirm within a few seconds — no GitHub login or commit needed.</div>
+        <div class="rb-tf" id="rbFltSeg">
+          <button type="button" data-filter="off">Filter OFF</button>
+          <button type="button" data-filter="on">Filter ON +2%/24h</button>
+        </div>
+        <div class="meta" id="rbFltNote">Entry filter: when ON, a new long needs the coin up at least +2% over the last 24 hours (15m candles); a new short needs it down at least −2%. Tap to turn it on or off; it should confirm within a few seconds — no GitHub login needed. Existing positions and exits are unchanged.</div>
+        <div class="rb-tf" id="rbSidesSeg">
+          <button type="button" data-sides="long">Long-only</button>
+          <button type="button" data-sides="ls">Long+Short</button>
+        </div>
+        <div class="meta" id="rbSidesNote">Long+Short (1x paper): an up arrow closes a short and opens a long; a down arrow closes a long and opens a short. Switching to Long-only closes open shorts immediately. Tap to change mode; it should confirm within a few seconds — no GitHub login needed.</div>
+        <div class="rb-reset">
+          <label for="rbResetCap">Reset paper bot · starting balance (USD)</label>
+          <input id="rbResetCap" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="e.g. 1000" value="500">
+          <button type="button" id="rbResetBtn">Reset</button>
+        </div>
+        <div class="meta" id="rbResetNote">Archives the current paper run and starts a new one with this starting balance. Open positions are not carried over. Type the starting balance here, then tap Reset and confirm. It should confirm within a few seconds — no GitHub login needed.</div>
+      </div>
+      <div id="rbErr" class="err"></div>
+    </div>
+    <div class="card" style="text-align:center"><div class="h3">Equity vs buy &amp; hold</div><div class="legend" style="justify-content:center"><span><i class="dot" style="background:#22c55e"></i>Bot</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold</span></div><div id="rbEq"></div></div>
+    <div class="rbpend hide" id="rbPend"></div>
+    <div class="card hide" id="rbPoolC"><div class="h3 pool-head" id="rbPoolHead" role="button" tabindex="0" aria-expanded="true" aria-controls="rbPoolBody"><span class="pool-chevron" id="rbPoolChev" aria-hidden="true">▾</span> Pool <span class="meta" id="rbPoolH"></span><span class="meta" id="rbPoolSum"></span></div><div id="rbPoolBody"><div class="slots" id="rbSlots"></div><div class="meta" id="rbPoolN" style="margin-top:6px"></div><div class="h3" style="margin-top:10px;font-size:14px">Skipped arrows <span class="meta">· slots full, not queued</span></div><div id="rbSkip"></div></div></div>
+    <div class="card"><div class="h3">Coins <span class="meta">· live prices · positions as of <span class="asof">–</span> · tap a coin for its chart</span></div><div class="ccards" id="rbCards"></div></div>
     <div class="card"><div class="h3">Open positions <span class="meta">· as of <span class="asof">–</span> WIB, P&amp;L live</span></div><div class="tblwrap"><table id="rbPos"><thead><tr><th>Coin<span class="sub">size</span></th><th>Entry<span class="sub">time WIB</span></th><th>Now<span class="sub">net if sold</span></th><th>TP<span class="sub">SL</span></th><th>Unreal. $<span class="sub">%</span></th></tr></thead><tbody></tbody></table></div><div class="meta" id="rbPosNote"></div></div>
     <div class="card"><div class="h3">Trade log</div>
       <div class="flt"><select id="rbFCoin" aria-label="Filter by coin"></select><div class="pseg" id="rbFRes"></div></div>
@@ -262,17 +283,7 @@ body.isStale #vSig .card,body.isStale #vDet .card{opacity:.45;transition:opacity
   </section>
 
   <section id="vPap" class="hide">
-
-    <div class="sim"><b>BROWSER SIMULATION: this is NOT the 24/7 paper bot's actual trades or balance.</b> This page runs its own paper simulation in your browser, recomputed on every page load from the start time below using Binance public price history, so its numbers can differ from the bot's (the bot switched rules and timeframes during its run; this page applies one rule from the start). No exchange keys are used and no orders are placed anywhere. Default: <b>Exit Arrows, long-only</b>, $500 split equally across <b>the live bot's current coins</b> (its universe in bot.json, start time = the bot's start); BUY at the next bar open after a ▲ up arrow (close crosses above the Exit SSL HMA15), sell to cash after a ▼ down arrow. Indicator = Mihkel00 SSL Hybrid, TradingView Pine v6 (WMA ATR smoothing), identical to the bot's ssl_core.py. Fees 0.1% per side.</div>
-    <div class="pload" id="pLoad" role="status" aria-live="polite"><span class="spin"></span><div style="flex:1;min-width:0"><div id="pLoadT">Loading price history…</div><div class="bar"><i id="pLoadB"></i></div></div></div>
-    <div class="card">
-      <div class="simtag">Browser simulation · not the bot's actual trades</div>
-      <div class="phead"><div><div class="meta">Simulated paper balance (marked to the live price)</div><div class="big" id="pBal">–</div><div id="pPnl" class="meta"></div></div>
-      <div class="cd">Next <span id="pCdTf">15m</span> bar close in<br><b id="pCd">–</b><div id="pCdAt"></div></div></div>
-      <div id="pErr" class="err"></div>
-    </div>
-    <div class="card"><div class="legend"><span><i class="dot" style="background:#22c55e"></i>Paper equity since start (USD)</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold same coins</span></div><div id="ppc"></div></div>
-    <div class="newsig" id="pNew"></div>
+    <div class="sim"><b>BROWSER SIMULATION: this is NOT the 24/7 paper bot's actual trades or balance.</b> This page runs its own paper simulation in your browser, recomputed on every page load from the start time below using Binance public price history, so its numbers can differ from the bot's (the bot switched rules and timeframes during its run; this page applies one rule from the start). No exchange keys are used and no orders are placed anywhere. Default: <b>Exit Arrows, long-only</b>, $500 split across ZEC, NEAR, PEPE, SOL, XRP; BUY at the next bar open after a ▲ up arrow (close crosses above the Exit SSL HMA15), sell to cash after a ▼ down arrow. Indicator = Mihkel00 SSL Hybrid, TradingView Pine v6 (WMA ATR smoothing), identical to the bot's ssl_core.py. Fees 0.1% per side.</div>
     <div class="card">
       <div class="pform">
         <label>Start time (WIB)<input id="pStart" type="datetime-local" step="60"></label>
@@ -284,12 +295,20 @@ body.isStale #vSig .card,body.isStale #vDet .card{opacity:.45;transition:opacity
         <div class="full"><div class="chips" id="pChips"></div></div>
       </div>
       <div class="meta" id="pSetup" style="margin-top:8px"></div>
+      <div id="pErr" class="err"></div>
+    </div>
+    <div class="newsig" id="pNew"></div>
+    <div class="card">
+      <div class="simtag">Browser simulation · not the bot's actual trades</div>
+      <div class="phead"><div><div class="meta">Simulated paper balance (marked to the live price)</div><div class="big" id="pBal">–</div><div id="pPnl" class="meta"></div></div>
+      <div class="cd">Next <span id="pCdTf">15m</span> bar close in<br><b id="pCd">–</b><div id="pCdAt"></div></div></div>
     </div>
     <div class="card"><div class="h3">Coins · Exit Arrow state</div><div class="tblwrap"><table id="pCoins"><thead><tr><th>Coin<span class="sub">price</span></th><th>Position<span class="sub">Exit SSL</span></th><th>Last arrow<span class="sub">bar open WIB</span></th><th>Value $<span class="sub">P&amp;L</span></th></tr></thead><tbody></tbody></table></div><div class="meta" id="pCoinsNote"></div></div>
     <div class="card"><div class="h3">Chart · <span id="ppxTitle"></span></div><div class="pseg cseg" id="ppxSeg"></div>
       <div class="legend"><span><i class="dot" style="background:#3b82f6"></i>Baseline HMA60</span><span><i class="dot" style="background:#a78bfa"></i>Exit SSL HMA15</span><span><i class="dot" style="background:#f59e0b"></i>SSL1</span><span><i class="dot" style="background:#22d3ee"></i>SSL2 (JMA5)</span><span><b class="pos">▲</b>/<b class="neg">▼</b> Exit Arrows · <b style="color:#fde047">B</b>/<b style="color:#fde047">S</b> paper fills</span></div>
       <div id="ppx"></div><div class="meta" id="ppxNote"></div></div>
     <div class="card"><div class="h3">Open positions</div><div class="tblwrap"><table id="pPos"><thead><tr><th>Coin</th><th>Entry<span class="sub">time WIB</span></th><th>Now</th><th>Unreal. $<span class="sub">%</span></th><th>Bars</th></tr></thead><tbody></tbody></table></div><div class="meta" id="pPosNote"></div></div>
+    <div class="card"><div class="legend"><span><i class="dot" style="background:#22c55e"></i>Paper equity since start (USD)</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold same coins</span></div><div id="ppc"></div></div>
     <div class="card"><div class="h3">Trade log</div><div class="tblwrap"><table id="pLog"><thead><tr><th>Time WIB</th><th>Coin</th><th>Side</th><th>Price</th><th>$ P&amp;L<span class="sub">fee</span></th></tr></thead><tbody></tbody></table></div><div class="meta" id="pLogNote"></div></div>
   </section>
 
@@ -403,8 +422,6 @@ if (typeof module !== "undefined") module.exports = { indicator, backtest, metri
    It also recomputes the Exit Arrows on bars that closed after the export (same Pine v6 indicator() as the simulation)
    and shows a "pending" hint only; it never simulates trades into the bot's balance. */
 window.RB = (function () {
-  // highlight the bot's active timeframe (bot.json "tf") on the Real Bot 15m/1h/4h buttons
-  function tfMark() { document.querySelectorAll("#rbTfSeg button").forEach(b => b.classList.toggle("on", !!D && b.dataset.tf === D.tf)); }
   const $ = id => document.getElementById(id);
   const STALE_MIN = 25, TFMS = { "15m": 9e5, "1h": 36e5, "4h": 144e5 }, PRICE_MS = 5000;
   const PX_SRC = [["api.binance.com", "https://api.binance.com/api/v3"], ["data-api.binance.vision", "https://data-api.binance.vision/api/v3"]];
@@ -421,9 +438,10 @@ window.RB = (function () {
   const T = ms => Math.floor(ms / 1000) + 7 * 3600;   // charts render UTC; shift so the axis reads WIB
   const prec = p => !num(p) ? 2 : p < 0.001 ? 10 : p < 1 ? 5 : p < 100 ? 3 : 2;
   const onBot = () => document.body.classList.contains("onBot");
-  let D = null, V = null, coin = localStorage.getItem("rbCoin") || null, fCoin = "ALL", fRes = "all", eqC, eqS, bhS, pxC, pxS = {}, lastFetch = 0, loading = false;
+  let D = null, V = null, coin = localStorage.getItem("rbCoin") || new URLSearchParams(location.search).get("coin"), fCoin = "ALL", fRes = "all", eqC, eqS, bhS, pxC, rsiC, pxS = {}, rsiS = {}, lastFetch = 0, loading = false, syncingRange = false;
+  if (coin) coin = String(coin).toUpperCase();
   let LP = {}, lpT = 0, lpSrc = "", lpIdx = 0, lpBusy = false, lpErr = "", pend = {}, pendT = 0;
-  const TOG = JSON.parse(localStorage.getItem("rbTogs") || '{"chan":true,"base":true,"exit":true,"ssl1":false,"ssl2":false,"arrows":true,"fills":true}');
+  const TOG = Object.assign({chan:true,base:true,exit:true,ssl1:false,ssl2:false,arrows:true,fills:true,skips:true}, JSON.parse(localStorage.getItem("rbTogs") || "{}"));
   const chartOpt = () => ({ autoSize: true, layout: { background: { color: "#141923" }, textColor: "#8a93a6", fontSize: 11 }, grid: { vertLines: { color: "#1e2533" }, horzLines: { color: "#1e2533" } }, rightPriceScale: { borderColor: "#262e3f" }, timeScale: { borderColor: "#262e3f", timeVisible: true, secondsVisible: false }, crosshair: { mode: 0 }, handleScroll: { vertTouchDrag: false } });
 
   // ---------- data ----------
@@ -540,17 +558,14 @@ window.RB = (function () {
     let det = st === "RUNNING" ? "Bot alive" + (num(D.hb_age_s) ? `, heartbeat ${Math.round(D.hb_age_s)} s before the export` : "") : (D.status_detail || "");
     if (D.paused) det = `Paused since ${D.paused.since_wib} WIB: ${D.paused.reason}. No new entries; exits still follow the rules.`;
     $("rbDetail").textContent = det + (D.heartbeat_wib ? ` (last heartbeat ${D.heartbeat_wib.slice(11, 19)} WIB)` : "");
-    $("rbExp").textContent = wib(D.exported_ms);
-
-    document.querySelectorAll("#rbTfSeg button").forEach(b => b.classList.toggle("on", b.dataset.tf === D.tf));
- $("rbAgo").textContent = `(${ageMin < 1 ? "<1" : Math.round(ageMin)} min ago)`;
+    $("rbExp").textContent = wib(D.exported_ms); $("rbAgo").textContent = `(${ageMin < 1 ? "<1" : Math.round(ageMin)} min ago)`;
     document.querySelectorAll("#vBot .asof").forEach(e => e.textContent = WIBH.format(new Date(D.positions_as_of_ms || D.exported_ms)));
     const tb = TFMS[D.tf] || 9e5, now = Date.now(), nx = Math.ceil((now + 1) / tb) * tb, s = Math.round((nx - now) / 1000);
     $("rbTf").textContent = D.tf; $("rbCd").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; $("rbCdAt").textContent = "at " + WIBH.format(new Date(nx)) + " WIB";
     if (onBot()) { $("upd").textContent = "Real bot · exported " + wib(D.exported_ms) + " WIB"; $("src").textContent = V && V.live ? "· live P&L" : ""; }
     liveBadge();
   }
-  function render() { tfMark(); header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) coin = D.coins[0] && D.coins[0].coin; coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
+  function render() { header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) { const held = (D.open || []).find(o => o && o.coin) || D.coins.find(c => c.pos === "long" || c.pos === "short"); coin = (held && held.coin) || (D.coins[0] && D.coins[0].coin); } coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
 
   function numbers() {
     $("rbBal").textContent = usd(V.balance); $("rbBal").classList.remove("flash"); void $("rbBal").offsetWidth; if (V.live) $("rbBal").classList.add("flash");
@@ -601,15 +616,51 @@ window.RB = (function () {
   }
 
   function togs() {
-    const L = [["chan", "Channel"], ["base", "Baseline"], ["exit", "Exit line"], ["ssl1", "SSL1"], ["ssl2", "SSL2"], ["arrows", "Arrows"], ["fills", "B/S fills"]];
+    const L = [["chan", "Channel"], ["base", "Baseline"], ["exit", "Exit line"], ["ssl1", "SSL1"], ["ssl2", "SSL2"], ["arrows", "Arrows"], ["fills", "Trades"], ["skips", "RSI skips"]];
     $("rbTogs").innerHTML = L.map(([k, l]) => `<label><input type="checkbox" data-k="${k}" ${TOG[k] ? "checked" : ""}>${l}</label>`).join("");
     $("rbTogs").querySelectorAll("input").forEach(i => i.onchange = () => { TOG[i.dataset.k] = i.checked; localStorage.setItem("rbTogs", JSON.stringify(TOG)); coinChart(false); });
   }
-  let livePL = null;
+
+  let livePL = null, liveRsiPL = null;
+  function snapBar(times, ms) {
+    if (!times || !times.length || !num(ms)) return null;
+    let prev = null;
+    for (let i = 0; i < times.length; i++) {
+      const t = times[i];
+      if (t === ms) return t;
+      if (t > ms) return prev != null ? prev : t;
+      prev = t;
+    }
+    return prev;
+  }
+  function setRsiLabel(v) {
+    const txt = num(v) ? v.toFixed(1) : "–";
+    const k = num(v) ? (v < 35 ? "pos" : v > 65 ? "neg" : "") : "";
+    const el = $("rbRsiVal"), now = $("rbRsiNow");
+    if (el) { el.textContent = txt; el.className = k; }
+    if (now) { now.textContent = num(v) ? "RSI " + txt : ""; now.className = "rbRsiNow " + k; }
+  }
   function livePriceLine() {
     const c = V && V.coins.find(x => x.coin === coin); if (!pxS.c || !c || !c.live) return;
     if (livePL) { try { pxS.c.removePriceLine(livePL); } catch (e) {} }
     livePL = pxS.c.createPriceLine({ price: c.price, color: "#93c5fd", lineWidth: 1, lineStyle: 1, axisLabelVisible: true, title: "live" });
+    if (rsiS.rsi && num(c.rsi)) {
+      if (liveRsiPL) { try { rsiS.rsi.removePriceLine(liveRsiPL); } catch (e) {} }
+      liveRsiPL = rsiS.rsi.createPriceLine({ price: c.rsi, color: "#f59e0b", lineWidth: 1, lineStyle: 0, axisLabelVisible: true, title: "RSI" });
+      setRsiLabel(c.rsi);
+    }
+  }
+  function bindChartSync() {
+    if (!pxC || !rsiC || pxC._synced) return;
+    pxC._synced = true;
+    pxC.timeScale().subscribeVisibleLogicalRangeChange(r => {
+      if (syncingRange || !r || !rsiC) return;
+      syncingRange = true; try { rsiC.timeScale().setVisibleLogicalRange(r); } finally { syncingRange = false; }
+    });
+    rsiC.timeScale().subscribeVisibleLogicalRangeChange(r => {
+      if (syncingRange || !r || !pxC) return;
+      syncingRange = true; try { pxC.timeScale().setVisibleLogicalRange(r); } finally { syncingRange = false; }
+    });
   }
   function coinChart(scroll) {
     const c = D.coins.find(x => x.coin === coin); if (!c) return;
@@ -618,9 +669,14 @@ window.RB = (function () {
     if (!$("rbTogs").childElementCount) togs();
     $("rbPxT").textContent = `${c.coin}/USDT · ${D.tf}`;
     const ch = c.chart;
-    if (!pxC) pxC = LightweightCharts.createChart($("rbPx"), chartOpt());
+    const pxOpt = Object.assign(chartOpt(), { timeScale: { borderColor: "#262e3f", timeVisible: false, secondsVisible: false, visible: false } });
+    const rsiOpt = Object.assign(chartOpt(), { timeScale: { borderColor: "#262e3f", timeVisible: true, secondsVisible: false, visible: true } });
+    if (!pxC && $("rbPx")) pxC = LightweightCharts.createChart($("rbPx"), pxOpt);
+    if (!rsiC && $("rbRsi")) rsiC = LightweightCharts.createChart($("rbRsi"), rsiOpt);
+    bindChartSync();
     Object.values(pxS).forEach(s => { try { pxC.removeSeries(s); } catch (e) {} }); pxS = {}; livePL = null;
-    if (!ch || !ch.t || !ch.t.length) { $("rbPxNote").textContent = "No chart data for this coin yet."; return; }
+    Object.values(rsiS).forEach(s => { try { rsiC.removeSeries(s); } catch (e) {} }); rsiS = {}; liveRsiPL = null;
+    if (!ch || !ch.t || !ch.t.length) { $("rbPxNote").textContent = "No chart data for this coin yet."; setRsiLabel(c.rsi); return; }
     const pf = { type: "price", precision: prec(c.price), minMove: Math.pow(10, -prec(c.price)) };
     const line = (k, color, w, style) => { const s = pxC.addLineSeries({ color, lineWidth: w, lineStyle: style || 0, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, priceFormat: pf });
       s.setData(ch.t.map((t, i) => num(ch[k][i]) ? { time: T(t), value: ch[k][i] } : { time: T(t) })); pxS[k] = s; };
@@ -632,19 +688,58 @@ window.RB = (function () {
     const cs = pxC.addCandlestickSeries({ upColor: "#22c55e", downColor: "#ef4444", borderVisible: false, wickUpColor: "#22c55e", wickDownColor: "#ef4444", priceFormat: pf, priceLineVisible: false });
     cs.setData(ch.t.map((t, i) => ({ time: T(t), open: ch.o[i], high: ch.h[i], low: ch.l[i], close: ch.c[i] }))); pxS.c = cs;
     const tset = new Set(ch.t), m = [];
-    if (TOG.arrows) { (ch.au || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "belowBar", color: "#22c55e", shape: "arrowUp", size: 1 }));
-      (ch.ad || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "aboveBar", color: "#ef4444", shape: "arrowDown", size: 1 })); }
-    if (TOG.fills) (ch.fills || []).forEach(f => { const t = tset.has(f.t) ? f.t : ch.t.find(x => x >= f.t); if (t != null) m.push({ time: T(t), position: f.side === "BUY" ? "belowBar" : "aboveBar", color: "#fde047", shape: f.side === "BUY" ? "arrowUp" : "arrowDown", text: f.side === "BUY" ? "B" : "S" + (num(f.pnl) ? " " + usd(f.pnl, 1) : "") }); });
-    m.sort((a, b) => a.time - b.time); cs.setMarkers(m);
-    if (c.pos === "long" && num(c.entry)) cs.createPriceLine({ price: c.entry, color: "#fde047", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "entry" });
-    if (c.pos === "long" && num(c.tp_px)) cs.createPriceLine({ price: c.tp_px, color: "#22c55e", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "TP +$" + (D.pool && D.pool.tp_usd) });
-    if (c.pos === "long" && num(c.sl_px)) cs.createPriceLine({ price: c.sl_px, color: "#ef4444", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "SL −$" + (D.pool && D.pool.sl_usd) });
-    const n = ch.t.length, vis = window.innerWidth < 760 ? 80 : 150;
-    if (n > vis) pxC.timeScale().setVisibleLogicalRange({ from: n - vis, to: n + 1 }); else pxC.timeScale().fitContent();
+    const hang = ms => { const t = tset.has(ms) ? ms : snapBar(ch.t, ms); return t != null ? T(t) : null; };
+    if (TOG.arrows) { (ch.au || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "belowBar", color: "#4ade80", shape: "arrowUp", size: 0.7 }));
+      (ch.ad || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "aboveBar", color: "#f87171", shape: "arrowDown", size: 0.7 })); }
+    if (TOG.skips !== false) (ch.skips || []).forEach(sk => {
+      const tm = hang(sk.t); if (tm == null) return;
+      const up = sk.side !== "short";
+      m.push({ time: tm, position: up ? "belowBar" : "aboveBar", color: "rgba(148,163,184,0.55)", shape: up ? "arrowUp" : "arrowDown", size: 0.7, text: num(sk.rsi) ? "RSI " + sk.rsi.toFixed(0) : "RSI" });
+    });
+    const marks = (ch.marks && ch.marks.length) ? ch.marks : [];
+    if (TOG.fills) {
+      marks.forEach(mk => {
+        const tm = hang(mk.t); if (tm == null) return;
+        if (mk.kind === "long") m.push({ time: tm, position: "belowBar", color: "#22c55e", shape: "arrowUp", text: "LONG" });
+        else if (mk.kind === "short") m.push({ time: tm, position: "aboveBar", color: "#ef4444", shape: "arrowDown", text: "SHORT" });
+        else if (mk.kind === "exit") m.push({ time: tm, position: "aboveBar", color: num(mk.pnl) && mk.pnl < 0 ? "#ef4444" : "#e2e8f0", shape: "square", text: "EXIT" + (num(mk.pnl) ? " " + usd(mk.pnl, 1) : "") });
+      });
+      if (!marks.length && (ch.fills || []).length) (ch.fills || []).forEach(f => {
+        const tm = hang(f.t); if (tm == null) return;
+        if (f.side === "BUY") m.push({ time: tm, position: "belowBar", color: "#22c55e", shape: "arrowUp", text: "LONG" });
+        else if (f.side === "SHORT") m.push({ time: tm, position: "aboveBar", color: "#ef4444", shape: "arrowDown", text: "SHORT" });
+        else m.push({ time: tm, position: "aboveBar", color: num(f.pnl) && f.pnl < 0 ? "#ef4444" : "#e2e8f0", shape: "square", text: "EXIT" + (num(f.pnl) ? " " + usd(f.pnl, 1) : "") });
+      });
+    }
+    m.sort((a, b) => a.time - b.time || String(a.text || "").localeCompare(String(b.text || ""))); cs.setMarkers(m);
+    const heldC = c.pos === "long" || c.pos === "short";
+    if (heldC && num(c.entry)) cs.createPriceLine({ price: c.entry, color: "#fde047", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: (c.pos === "short" ? "SHORT " : "LONG ") + "entry" });
+    if (heldC && num(c.tp_px)) cs.createPriceLine({ price: c.tp_px, color: "#22c55e", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "TP +$" + (D.pool && D.pool.tp_usd) });
+    if (heldC && num(c.sl_px)) cs.createPriceLine({ price: c.sl_px, color: "#ef4444", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "SL −$" + (D.pool && D.pool.sl_usd) });
+    if (rsiC) {
+      const times = ch.t.map(T);
+      const rsiVals = (ch.rsi || []).map((v, i) => num(v) ? { time: times[i], value: v } : null).filter(Boolean);
+      const scale01 = () => ({ priceRange: { minValue: 0, maxValue: 100 } });
+      const os = rsiC.addAreaSeries({ topColor: "rgba(34,197,94,0.20)", bottomColor: "rgba(34,197,94,0.04)", lineColor: "rgba(34,197,94,0)", lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, autoscaleInfoProvider: scale01 });
+      os.setData(times.map(t => ({ time: t, value: 35 }))); rsiS.os = os;
+      const ob = rsiC.addBaselineSeries({ baseValue: { type: "price", price: 65 }, topFillColor1: "rgba(239,68,68,0.20)", topFillColor2: "rgba(239,68,68,0.05)", topLineColor: "rgba(239,68,68,0)", bottomFillColor1: "rgba(0,0,0,0)", bottomFillColor2: "rgba(0,0,0,0)", bottomLineColor: "rgba(0,0,0,0)", lineWidth: 1, lineVisible: false, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, autoscaleInfoProvider: scale01 });
+      ob.setData(times.map(t => ({ time: t, value: 100 }))); rsiS.ob = ob;
+      const rs = rsiC.addLineSeries({ color: "#f59e0b", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "RSI", priceFormat: { type: "price", precision: 1, minMove: 0.1 }, autoscaleInfoProvider: scale01 });
+      rs.setData(rsiVals); rsiS.rsi = rs;
+      rs.createPriceLine({ price: 35, color: "#22c55e", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "35" });
+      rs.createPriceLine({ price: 65, color: "#ef4444", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "65" });
+    }
+    const lastRsi = (ch.rsi || []).filter(num).pop();
+    setRsiLabel(num(c.rsi) ? c.rsi : lastRsi);
+    const n = ch.t.length, vis = window.innerWidth < 760 ? 70 : 150;
+    const range = n > vis ? { from: n - vis, to: n + 1 } : null;
+    if (range) { pxC.timeScale().setVisibleLogicalRange(range); if (rsiC) rsiC.timeScale().setVisibleLogicalRange(range); }
+    else { pxC.timeScale().fitContent(); if (rsiC) rsiC.timeScale().fitContent(); }
     livePriceLine(); cinfo();
-    $("rbPxNote").textContent = `Last ${n} closed ${D.tf} bars up to the bar opened ${wib(ch.t[n - 1])} WIB, from the bot's own indicator output (the dotted blue "live" line is the current price). Drag or pinch to scroll back/zoom.`;
+    $("rbPxNote").textContent = `Last ${n} closed ${D.tf} bars up to the bar opened ${wib(ch.t[n - 1])} WIB, from the bot's own indicator output (the dotted blue "live" line is the current price). Green ▲ LONG / red ▼ SHORT mark paper entries; × EXIT shows the close and P&L. Faint arrows are Exit Arrows skipped by the RSI filter. Drag or pinch to scroll back/zoom.`;
     if (scroll) $("rbChartCard").scrollIntoView({ behavior: "smooth", block: "start" });
   }
+
   function cinfo() {
     const c = V && V.coins.find(x => x.coin === coin); if (!c) return;
     const I = [["Position", c.pos === "long" ? "LONG" : "CASH"], ["Price" + (c.live ? " · live" : ""), px(c.price)], ["Entry", c.pos === "long" ? px(c.entry) : "–"], ["Unrealised", c.pos === "long" ? usd(c.unreal, 1) + " · " + pct(c.unreal_pct) : "–"],
@@ -713,11 +808,8 @@ const LOOKBACK_DAYS = {"15m":367,"1h":3*365+5,"4h":3*365+20,"1d":3*365+120,"1w":
 const SOURCES = [
   { name: "api.binance.com", url: "https://api.binance.com/api/v3/klines", iv: tf => tf, max: 1000 },
   { name: "data-api.binance.vision", url: "https://data-api.binance.vision/api/v3/klines", iv: tf => tf, max: 1000 },
-  { name: "api-gcp.binance.com", url: "https://api-gcp.binance.com/api/v3/klines", iv: tf => tf, max: 1000 },
-  { name: "api1.binance.com", url: "https://api1.binance.com/api/v3/klines", iv: tf => tf, max: 1000 },
-  { name: "api.gateio.ws", gate: true, url: "https://api.gateio.ws/api/v4/spot/candlesticks", iv: tf => ({"1w":"7d"}[tf] || tf), max: 1000 },   // last resort if every Binance host is blocked on this network
+  { name: "api.mexc.com", url: "https://api.mexc.com/api/v3/klines", iv: tf => ({"1h":"60m","1w":"1W"}[tf] || tf), max: 500 },
 ];
-const srcDown = {};   // source index -> ms until which it is skipped (timeout / network error), so one blocked host does not stall every request
 const S = Object.assign({ tf: "1h", dir: "long", ex: "baseline", tab: "pap", coin: "BTC", sort: "since", asc: true, cap: 500, auto: true }, JSON.parse(localStorage.getItem("sslh") || "{}"));
 S.tab = ({ "#pap": "pap" })[location.hash] || "bot";   // the Real bot tab is the default on every load
 const SETKEYS = ["tf", "dir", "ex", "cap", "coin"];
@@ -741,49 +833,28 @@ function pump() {
   pump();
 }
 async function getJSON(url) {
-  const ac = new AbortController(); const to = setTimeout(() => ac.abort(), 8000);
+  const ac = new AbortController(); const to = setTimeout(() => ac.abort(), 12000);
   try { const r = await fetch(url, { signal: ac.signal }); if (!r.ok) { const e = new Error("HTTP " + r.status); e.status = r.status; throw e; } return await r.json(); }
   finally { clearTimeout(to); }
 }
-function pickSrc(tried) {   // chosen when the request actually starts, so hosts that failed meanwhile are skipped
-  const now = Date.now(); let later = -1;
-  for (let k = 0; k < SOURCES.length; k++) {
-    const si = (srcIdx + k) % SOURCES.length; if (tried.has(si)) continue;
-    if ((srcDown[si] || 0) <= now) return si; if (later < 0) later = si;
-  }
-  return later;
-}
-function srcUrl(s, sym, tf, opts) {
-  const lim = Math.min(opts.limit || 1000, s.max), bar = TF_MS[tf] || 9e5; let p;
-  if (s.gate) {   // Gate.io: currency_pair, seconds; limit cannot be combined with from/to
-    p = new URLSearchParams({ currency_pair: sym.replace(/USDT$/, "_USDT"), interval: s.iv(tf) });
-    if (opts.startTime) { const f = Math.floor(opts.startTime / 1000); p.set("from", String(f)); p.set("to", String(Math.min(f + (lim - 1) * bar / 1000, Math.floor(Date.now() / 1000)))); }
-    else p.set("limit", String(lim));
-  } else {
-    p = new URLSearchParams({ symbol: sym, interval: s.iv(tf), limit: String(lim) });
-    if (opts.startTime) p.set("startTime", String(opts.startTime));
-  }
-  return `${s.url}?${p}`;
-}
 async function klines(sym, tf, opts = {}) {
-  let lastErr; const tried = new Set(), bar = TF_MS[tf] || 9e5;
-  while (tried.size < SOURCES.length) {
-    let si = -1;
+  let lastErr;
+  for (let k = 0; k < SOURCES.length; k++) {
+    const si = (srcIdx + k) % SOURCES.length, s = SOURCES[si];
+    const p = new URLSearchParams({ symbol: sym, interval: s.iv(tf), limit: String(Math.min(opts.limit || 1000, s.max)) });
+    if (opts.startTime) p.set("startTime", String(opts.startTime));
     try {
-      const raw = await throttled(() => { si = pickSrc(tried); tried.add(si); return getJSON(srcUrl(SOURCES[si], sym, tf, opts)); });
-      const s = SOURCES[si]; sourceOK[s.name] = true; srcDown[si] = 0;
+      const raw = await throttled(() => getJSON(`${s.url}?${p}`));
+      sourceOK[s.name] = true;
       if (si !== srcIdx) srcIdx = si;
-      if (s.gate) return raw.map(r => [Number(r[0]) * 1000, +r[5], +r[3], +r[4], +r[2], Number(r[0]) * 1000 + bar - 1]);
       return raw.map(r => [Number(r[0]), +r[1], +r[2], +r[3], +r[4], Number(r[6])]);
     } catch (e) {
-      if (si < 0) throw e;
-      const s = SOURCES[si]; lastErr = e; sourceOK[s.name] = false;
-      if (e.status === 400 && !s.gate) throw new Error("Unknown symbol " + sym); // invalid symbol: don't try other hosts
+      lastErr = e; sourceOK[s.name] = false;
+      if (e.status === 400) throw new Error("Unknown symbol " + sym); // invalid symbol: don't try other hosts
       if (e.status === 429 || e.status === 418) await new Promise(r => setTimeout(r, 2000));
-      else if (!e.status || e.status === 403 || e.status >= 451) { srcDown[si] = Date.now() + 120000; if (si === srcIdx) srcIdx = (si + 1) % SOURCES.length; }   // blocked / unreachable host
     }
   }
-  throw new Error(lastErr && lastErr.name === "AbortError" ? "price servers timed out" : lastErr && !lastErr.status ? "price servers unreachable (" + (lastErr.message || "network") + ")" : (lastErr && lastErr.message) || "all sources failed");
+  throw lastErr || new Error("all sources failed");
 }
 function toData(rows) {
   const now = Date.now();
@@ -988,27 +1059,13 @@ let BAR = 9e5; const PRE_BARS = 1000;   // bar size of the committed paper timef
 const wibToMs = s => { const m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(s || ""); return m ? Date.UTC(+m[1], m[2]-1, +m[3], +m[4], +m[5]) - 7*36e5 : NaN; };
 const msToWibInput = ms => new Date(ms + 7*36e5).toISOString().slice(0, 16);
 const WIBS = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jakarta", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
-// Default portfolio = the live bot's current coins and start time (./bot.json "universe" / "start_wib"), refreshed on every run.
-// P.bot = true follows the bot; ticking chips by hand switches to a custom selection (the "Bot coins" chip switches back).
-// Settings key bumped to sslh_paper3 so phones that saved the old top-50 defaults (sslh_paper2) pick up the bot's coins.
-let BOTU = null, botuT = 0;   // {coins, start, tf}
-async function botUniverse() {
-  if (BOTU && Date.now() - botuT < 300000) return BOTU;
-  try {
-    const r = await fetch("./bot.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error(r.status);
-    const j = await r.json(), u = (j.universe || []).filter(c => /^[A-Z0-9]+$/.test(c));
-    if (u.length) { BOTU = { coins: u, start: /^\d{4}-\d\d-\d\d \d\d:\d\d/.test(j.start_wib || "") ? j.start_wib.slice(0, 16).replace(" ", "T") : null, tf: j.tf }; botuT = Date.now(); }
-  } catch (e) { }
-  return BOTU;
-}
-const P = Object.assign({ start: "2026-10-27T07:52", startSet: false, cap: 500, mode: "pf", bot: true, sel: PAPER_DEF.slice(), tf: "15m", rule: "arrow_long" }, JSON.parse(localStorage.getItem("sslh_paper3") || "{}"));
-if (!PTF_MS[P.tf]) P.tf = "15m"; if (!RULES[P.rule]) P.rule = "arrow_long"; if (!Array.isArray(P.sel) || !P.sel.length) P.sel = PAPER_DEF.slice();
-function applyBot(o) { if (BOTU && o.bot) { o.sel = BOTU.coins.slice(); if (!o.startSet && BOTU.start) o.start = BOTU.start; } return o; }
+const P = Object.assign({ start: "2026-10-27T07:52", cap: 500, mode: "pf", sel: PAPER_DEF.slice(), tf: "15m", rule: "arrow_long" }, JSON.parse(localStorage.getItem("sslh_paper2") || "{}"));
+if (!PTF_MS[P.tf]) P.tf = "15m"; if (!RULES[P.rule]) P.rule = "arrow_long";
 const PR = JSON.parse(JSON.stringify(P));   // committed paper settings (applied by ▶ Run)
-const savePaper = () => localStorage.setItem("sslh_paper3", JSON.stringify(P));
-const papKey = o => [o.startSet || !o.bot ? o.start : "bot", o.cap, o.mode, o.mode === "pf" ? (o.bot ? "bot" : o.sel.join(",")) : "", o.tf, o.rule].join("|");
+const savePaper = () => localStorage.setItem("sslh_paper2", JSON.stringify(P));
+const papKey = o => [o.start, o.cap, o.mode, o.mode === "pf" ? o.sel.join(",") : "", o.tf, o.rule].join("|");
 const papCoins = o => o.mode === "pf" ? o.sel.slice() : [o.mode];
-const papText = o => `Browser sim · ${o.tf} · Long-only · ${RULES[o.rule]} · ${fmtUsd(o.cap)} · ${o.mode === "pf" ? (o.bot ? `the live bot's ${o.sel.length} coins: ` : "Portfolio ") + o.sel.join(o.bot ? ", " : "+") : o.mode} · from ${o.start.replace("T", " ")} WIB`;
+const papText = o => `Browser sim · ${o.tf} · Long-only · ${RULES[o.rule]} · ${fmtUsd(o.cap)} · ${o.mode === "pf" ? "Portfolio " + o.sel.join("+") : o.mode} · from ${o.start.replace("T", " ")} WIB`;
 const papRun = { key: null, n: 0, total: 0 }, papCache = {};   // sym -> {from, rows}
 let ppChart = null, ppEq = null, ppBh = null, papLast = null, pxChart = null, pxS = {}, pxCoin = null;
 
@@ -1016,31 +1073,25 @@ function paperForm() {
   $("pStart").value = P.start; $("pCap").value = P.cap;
   const opts = [["pf", "Portfolio: split capital equally across selected coins"]].concat(COINS.map(c => [c, c + "/USDT only"]));
   $("pMode").innerHTML = opts.map(([v, l]) => `<option value="${v}">${l}</option>`).join(""); $("pMode").value = P.mode;
-  applyBot(P);
-  const chips = [...new Set(BOTU ? BOTU.coins.concat(P.sel, ["BTC", "ETH"]) : P.sel.concat(PAPER_COINS))];
-  $("pChips").innerHTML = (BOTU ? `<label class="botc"><input type="checkbox" value="__bot" ${P.bot ? "checked" : ""}>Bot coins (${BOTU.coins.length})</label>` : "") +
-    chips.map(c => `<label><input type="checkbox" value="${c}" ${P.sel.includes(c) ? "checked" : ""}>${c}</label>`).join("");
+  $("pChips").innerHTML = PAPER_COINS.map(c => `<label><input type="checkbox" value="${c}" ${P.sel.includes(c) ? "checked" : ""}>${c}</label>`).join("");
   $("pChips").classList.toggle("off", P.mode !== "pf");
   $("pRule").innerHTML = Object.entries(RULES).map(([v, l]) => `<option value="${v}">${l}${v === "arrow_long" ? " · default" : ""}</option>`).join(""); $("pRule").value = P.rule;
   $("pTfSeg").innerHTML = Object.keys(PTF_MS).map(t => `<button type="button" data-tf="${t}" class="${P.tf === t ? "on" : ""}">${t}</button>`).join("");
   $("pTfSeg").querySelectorAll("button").forEach(b => b.onclick = e => { e.preventDefault(); P.tf = b.dataset.tf; paperChanged(); });
 }
 function paperChanged() {
-  const st = $("pStart").value; if (isFinite(wibToMs(st)) && st !== P.start) { P.start = st; P.startSet = true; }
+  const st = $("pStart").value; if (isFinite(wibToMs(st))) P.start = st;
   const v = parseFloat($("pCap").value); P.cap = isFinite(v) && v > 0 ? v : 500;
   P.mode = $("pMode").value; P.rule = RULES[$("pRule").value] ? $("pRule").value : "arrow_long";
-  const bi = $("pChips").querySelector('input[value="__bot"]'), wasBot = P.bot;
-  const sel = [...$("pChips").querySelectorAll("input:checked")].map(i => i.value).filter(v => v !== "__bot");
-  if (bi && bi.checked && !wasBot) { P.bot = true; applyBot(P); }   // "Bot coins" ticked: follow the live bot again
-  else if (bi && !bi.checked && wasBot) P.bot = false;
-  else if (sel.join(",") !== P.sel.join(",")) { P.bot = false; P.sel = sel.length ? sel : P.sel; }   // a coin chip changed: custom selection (keep at least one coin)
+  const sel = [...$("pChips").querySelectorAll("input:checked")].map(i => i.value);
+  P.sel = sel.length ? PAPER_COINS.filter(c => sel.includes(c)) : P.sel;   // keep at least one coin
   savePaper(); paperForm(); markStale();
 }
 ["pStart", "pCap", "pMode", "pRule"].forEach(id => $(id).addEventListener("change", paperChanged));
 $("pChips").addEventListener("change", paperChanged);
 $("pReset").onclick = () => {
   if (!confirm("Restart the paper test from now? The current paper results will be replaced (it is only a simulation).")) return;
-  P.start = msToWibInput(Date.now()); P.startSet = true; savePaper(); paperForm(); runNow();
+  P.start = msToWibInput(Date.now()); savePaper(); paperForm(); runNow();
 };
 
 async function paperRows(sym, startMs, tf) {
@@ -1117,32 +1168,20 @@ function paperCoin(rows, startMs, coinCap, rule) {
   res.liveBh = coinCap*live/ds.c[WARMUP];
   return res;
 }
-function papStatus(txt, frac) {   // the visible loading / progress state of the Simulation tab
-  $("pLoad").classList.toggle("on", !!txt); if (txt) $("pLoadT").textContent = txt;
-  $("pLoadB").style.width = Math.round(100 * Math.max(0, Math.min(1, frac || 0))) + "%";
-}
 async function loadPaper() {
-  const quiet = runMode === "auto" && papLast;   // the 60 s refresh keeps the shown results and only shows a small note
-  if (PR.bot && PR.mode === "pf") { if (!quiet) papStatus("Loading the live bot's coins…", 0.02); await botUniverse(); if (BOTU) { applyBot(PR); applyBot(P); paperForm(); } }
   const o = JSON.parse(JSON.stringify(PR)), startMs = wibToMs(o.start), coins = papCoins(o), cc = o.cap/coins.length;
   BAR = PTF_MS[o.tf] || 9e5;
-  $("pErr").textContent = ""; papRun.n = 0; papRun.total = coins.length;
-  const t0 = Date.now(), prog = () => papStatus(quiet ? "" : `Loading ${o.tf} price history in your browser… ${papRun.n}/${coins.length} coins · ${Math.round((Date.now() - t0) / 1000)} s (${PRE_BARS} warm-up bars each, via ${SOURCES[srcIdx].name}${Object.values(srcDown).some(v => v > Date.now()) ? ", a price host did not answer, trying backups" : ""})`, 0.05 + 0.95 * papRun.n / Math.max(1, coins.length));
-  const progT = setInterval(prog, 1000);
-  if (!papLast) { $("pBal").textContent = "Loading…"; $("pBal").className = "big"; $("pPnl").textContent = "Fetching price history for " + coins.length + " coin" + (coins.length === 1 ? "" : "s") + "…"; }
-  prog();
+  $("pErr").textContent = ""; papRun.n = 0; papRun.total = coins.length; runProgress();
   if (!isFinite(startMs)) { $("pErr").textContent = "Invalid start time."; return; }
   if (Date.now() - startMs > 120*864e5) { $("pErr").textContent = "Start time must be within the last 120 days."; return; }
   const errs = [], out = {};
   await Promise.all(coins.map(async c => {
     try { out[c] = paperCoin(await paperRows(c + "USDT", startMs, o.tf), startMs, cc, o.rule); out[c].coin = c; }
     catch (e) { errs.push(c + ": " + e.message); }
-    finally { papRun.n++; prog(); }
-  })).finally(() => clearInterval(progT));
-  papStatus("");
-  if (errs.length) $("pErr").textContent = (errs.length === coins.length ? "Could not load any price history (Binance and the backup hosts did not answer from this network). Will retry on the next refresh. " : "Failed: ") + errs.join(", ");
-  if (errs.length === coins.length && papLast) return;   // keep the last good result on screen
-  papLast = { o, startMs, coins, cc, out }; window.__paper = papLast; renderPaper(); papRun.key = errs.length === coins.length ? null : papKey(o); stamp();
+    finally { papRun.n++; runProgress(); }
+  }));
+  if (errs.length) $("pErr").textContent = "Failed: " + errs.join(", ");
+  papLast = { o, startMs, coins, cc, out }; window.__paper = papLast; renderPaper(); papRun.key = papKey(o); stamp();
 }
 function renderPaper() {
   if (!papLast) return;
@@ -1252,22 +1291,22 @@ function setupText(o) { return `${o.tf} · ${o.dir === "ls" ? "Long+Short" : "Lo
 function isStale() { return S.tab === "bot" ? false : S.tab === "pap" ? papKey(P) !== papKey(PR) : SETKEYS.some(k => S[k] !== R[k]); }
 var autoT = null;
 function autoRun(ms) { clearTimeout(autoT); autoT = setTimeout(() => { if (S.tab !== "bot" && isStale()) runNow(); }, ms || 450); }   // any settings change re-runs by itself
-function markStale() { if (S.tab !== "bot" && isStale()) autoRun(); document.body.classList.toggle("isStale", isStale()); /* runBtn removed */ $("runSetup").textContent = "Showing: " + (S.tab === "pap" ? papText(PR) : setupText(R)); }
+function markStale() { if (S.tab !== "bot" && isStale()) autoRun(); document.body.classList.toggle("isStale", isStale()); $("runBtn").classList.toggle("attn", isStale()); $("runSetup").textContent = "Showing: " + (S.tab === "pap" ? papText(PR) : setupText(R)); }
 function runProgress() {
   if (!running) return;
-  if (runTab === "pap") { /* */ return; }
+  if (runTab === "pap") { $("runLab").textContent = papRun.total ? `Running… ${papRun.n}/${papRun.total} coins` : "Running…"; return; }
   const det = runTab === "det";
-  /* */
+  $("runLab").textContent = det ? (detRun.total ? `Running… ${detRun.n}/${detRun.total} batches` : "Running…") : `Running… ${sigRun.n}/${sigRun.total} coins`;
 }
 function work(mode) {   // mode: "run" (button / first load) or "auto" (60 s refresh)
   const p = (async () => {
-    runMode = mode; runTab = S.tab; /* */ $("refresh").disabled = true; runProgress();
+    runMode = mode; runTab = S.tab; $("runBtn").disabled = true; $("refresh").disabled = true; runProgress();
     try {
-      if (runTab === "pap") await loadPaper().catch(e => { papStatus(""); $("pErr").textContent = "Simulation error: " + (e && e.message || e); console.error(e); });
+      if (runTab === "pap") await loadPaper();
       else if (runTab === "det") await loadDetail(mode === "run" ? true : !pChart);
       else await loadSignals();
       if (mode === "run") $("runInfo").textContent = "Last run: " + WIB.format(new Date()) + " WIB";
-    } finally { running = null; /* */ $("refresh").disabled = false; /* */ markStale(); }
+    } finally { running = null; $("runBtn").disabled = false; $("refresh").disabled = false; $("runLab").textContent = "↻ Re-run"; markStale(); }
   })();
   running = p; return p;
 }
@@ -1289,27 +1328,10 @@ function ensureView() {   // a tab switch shows the last run; it only fetches if
   if (S.tab === "pap") { if (papRun.key !== papKey(PR)) work("run"); return; }
   if ((S.tab === "det" ? detRun.key : sigRun.key) !== k) work("run");
 }
-/* runBtn removed */
+$("runBtn").onclick = () => runNow();
 $("autoIn").checked = !!S.auto;
 $("autoIn").onchange = () => { S.auto = $("autoIn").checked; save(); };
 S.auto = true; save();   // auto-refresh is always on at page load
-
-// Real Bot TF selector: the page is static and holds no tokens, so a tap opens control/tf.json in GitHub's editor.
-// Commit {"tf":"1h",...} there; the box polls that file every ~60 s and switches the paper bot live.
-const TF_EDIT_URL = "https://github.com/dedkovic441-hub/ssl-hybrid-dashboard/edit/main/control/tf.json";
-document.querySelectorAll("#rbTfSeg button").forEach(btn => {
-  btn.onclick = () => {
-    const tf = btn.dataset.tf;
-    if (!["15m", "1h", "4h"].includes(tf)) return;
-    const note = document.getElementById("rbTfNote");
-    if (note) {
-      note.textContent = (btn.classList.contains("on") ? tf + " is already active. " : "Requested " + tf + ": ") + "Set tf to 15m, 1h or 4h and commit; the bot switches within ~1 min.";
-      note.setAttribute("role", "status"); note.setAttribute("aria-live", "polite");
-    }
-    window.open(TF_EDIT_URL, "_blank", "noopener");
-  };
-});
-
 selectCoin(S.coin); setTab(S.tab, false); markStale();
 if (S.tab === "bot") RB.show(); else runNow();   // first load: run with the saved (or default) settings so the page is never empty
 setInterval(() => { if (S.auto && !document.hidden) refreshAll(); }, 60000);

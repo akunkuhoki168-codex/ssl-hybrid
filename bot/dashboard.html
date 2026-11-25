@@ -63,7 +63,11 @@ tr.fresh td{background:rgba(245,158,11,.1)}
 .seg{display:flex;gap:6px;flex-wrap:wrap}
 .seg button{font:inherit;color:var(--tx);background:var(--card2);border:1px solid var(--line);border-radius:9px;min-height:38px;padding:0 12px;cursor:pointer}
 .seg button.on{background:var(--acc);border-color:var(--acc);font-weight:650}
-#eqc{height:240px}#cc{height:380px}
+#eqc{height:240px}#cc{height:260px}#rsi{height:110px}#cc,#rsi{width:100%;overflow:hidden}
+.rsihead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:6px 0 2px;font-size:11.5px;color:var(--mut)}
+.rsihead b{font-variant-numeric:tabular-nums;font-size:14px;color:var(--tx)}
+.rsihead b.pos{color:var(--up)}.rsihead b.neg{color:var(--dn)}
+.rbRsiNow{font-weight:700;margin-left:8px}.rbRsiNow.pos{color:var(--up)}.rbRsiNow.neg{color:var(--dn)}
 .legend{font-size:12px;color:var(--mut);display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
 .ln{display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:4px;vertical-align:middle}
 .ev{font-size:12.5px;border-bottom:1px solid var(--line);padding:6px 0;display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:start}
@@ -93,7 +97,7 @@ body.isOff .offline{display:block}body.isOff main{opacity:.5}
 .note{font-size:12px;color:var(--mut);margin-top:12px}
 .two{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:700px){.kpis{grid-template-columns:repeat(4,1fr)}.kpi.big{grid-column:span 2}.coins{grid-template-columns:repeat(4,1fr)}}
-@media(min-width:1100px){.kpis{grid-template-columns:repeat(6,1fr)}.coins{grid-template-columns:repeat(6,1fr)}.coin.big{grid-column:span 3}.two{grid-template-columns:1.3fr 1fr}#cc{height:440px}#eqc{height:280px}}
+@media(min-width:1100px){.kpis{grid-template-columns:repeat(6,1fr)}.coins{grid-template-columns:repeat(6,1fr)}.coin.big{grid-column:span 3}.two{grid-template-columns:1.3fr 1fr}#cc{height:340px}#rsi{height:130px}#eqc{height:280px}}
 </style></head>
 <body>
 <div class="offline" id="offB">● DASHBOARD OFFLINE: connection to the bot server lost. Retrying every 7 s…</div>
@@ -120,16 +124,18 @@ body.isOff .offline{display:block}body.isOff main{opacity:.5}
   </div>
 </div></header>
 <main class="wrap">
-  <div class="sim"><b>Paper trading simulation.</b> No real orders, no exchange keys; prices from Binance's public API. Mode <b id="modeT">…</b>. Rules: SSL Hybrid (TradingView v6 default settings) on the <b class="tfN">15m</b> timeframe; the trigger depends on the mode (below). Baseline state (active timeframe, switchable 15m/1h/4h in the header; a switch syncs each coin to the new timeframe's state at once at the live price: bull &amp; flat → BUY, bear &amp; long → SELL, balance carries over): <b>bull</b> = close above the upper channel, <b>bear</b> = close below the lower channel, inside the channel (grey) keeps the previous state. <span id="modeR"></span> Paused: no new positions (entries/re-entries blocked), but closing on an opposite signal still happens. <span id="sigR">Decisions on bar close, filled at the next bar's open.</span> 0.1% fee per side, full compounding, $500 start capital from <span id="startT">2026-10-27 07:52</span> WIB (ZEC, NEAR, PEPE, SOL, XRP until 19:45 WIB; then the low-cap universe below, balance carried over). <b>Warning:</b> the 1-year historical 15m backtest of these signals lost on all 30 coins tested (median −97% long-only crossover), mostly from fees on ~1,500 trades per coin. Earlier mode history is archived in <code>archive/</code>.</div>
   <div class="alert" id="alert"></div>
   <div class="card"><div class="kpis" id="kpis"></div></div>
+  <div class="card" id="chartCard" style="margin-top:10px"><div class="h"><span><span class="tfN">15m</span> chart <span class="rbRsiNow" id="rsiNow"></span></span> <div class="seg" id="cSel"></div></div>
+    <div class="legend"><span><i class="ln" style="background:#3b82f6"></i>Baseline HMA60</span><span><i class="ln" style="background:#64748b"></i>Channel ±0.2·EMA60(TR)</span><span><i class="ln" style="background:#a78bfa"></i>Exit SSL HMA15</span><span><i class="ln" style="background:#f472b6"></i>SSL1</span><span><i class="ln" style="background:#facc15"></i>SSL2 JMA5</span><span><i class="ln" style="background:#475569"></i>±ATR (WMA14)</span><span><b class="pos">▲ LONG</b> / <b class="neg">▼ SHORT</b> entries · <b>×</b> EXIT (P&amp;L) · faint = RSI-skipped · <b style="color:#00c3ff">▲</b><b style="color:#ff0062">▼</b> Exit Arrows</span></div>
+    <div id="cc"></div>
+    <div class="rsihead"><span>RSI(14) · active timeframe · guides at 35 / 65</span><b id="rsiVal">–</b></div>
+    <div id="rsi"></div></div>
+  <div class="sim"><b>Paper trading simulation.</b> No real orders, no exchange keys; prices from Binance's public API. Mode <b id="modeT">…</b>. Rules: SSL Hybrid (TradingView v6 default settings) on the <b class="tfN">15m</b> timeframe; the trigger depends on the mode (below). Baseline state (active timeframe, switchable 15m/1h/4h in the header; a switch syncs each coin to the new timeframe's state at once at the live price: bull &amp; flat → BUY, bear &amp; long → SELL, balance carries over): <b>bull</b> = close above the upper channel, <b>bear</b> = close below the lower channel, inside the channel (grey) keeps the previous state. <span id="modeR"></span> Paused: no new positions (entries/re-entries blocked), but closing on an opposite signal still happens. <span id="sigR">Decisions on bar close, filled at the next bar's open.</span> 0.1% fee per side, full compounding, $500 start capital from <span id="startT">2026-10-27 07:52</span> WIB (ZEC, NEAR, PEPE, SOL, XRP until 19:45 WIB; then the low-cap universe below, balance carried over). <b>Warning:</b> the 1-year historical 15m backtest of these signals lost on all 30 coins tested (median −97% long-only crossover), mostly from fees on ~1,500 trades per coin. Earlier mode history is archived in <code>archive/</code>.</div>
   <div class="card" id="poolC" style="display:none"><div class="h pool-head" id="poolHead" role="button" tabindex="0" aria-expanded="true" aria-controls="poolB"><span><span class="pool-chevron" id="poolChev" aria-hidden="true">▾</span> Pool <small id="poolSum"></small></span><small id="poolH"></small></div><div id="poolB"></div></div>
   <div class="card"><div class="h">Portfolio equity vs buy &amp; hold <small>USD, at each bar close of the active timeframe + switches + live mark</small></div>
     <div class="legend"><span><i class="ln" style="background:#22c55e"></i>Paper bot</span><span><i class="ln" style="background:#8a93a6"></i>Buy &amp; hold (same coins, same start)</span></div><div id="eqc"></div></div>
   <div class="card"><div class="h">Coins <small id="uniH"></small></div><div class="uni" id="uni"></div><div class="coins" id="coins"></div></div>
-  <div class="card" style="margin-top:10px"><div class="h"><span class="tfN">15m</span> chart <div class="seg" id="cSel"></div></div>
-    <div class="legend"><span><i class="ln" style="background:#3b82f6"></i>Baseline HMA60</span><span><i class="ln" style="background:#64748b"></i>Channel ±0.2·EMA60(TR)</span><span><i class="ln" style="background:#a78bfa"></i>Exit SSL HMA15</span><span><i class="ln" style="background:#f472b6"></i>SSL1</span><span><i class="ln" style="background:#facc15"></i>SSL2 JMA5</span><span><i class="ln" style="background:#475569"></i>±ATR (WMA14)</span><span><b style="color:#00c3ff">▲</b><b style="color:#ff0062">▼</b> Exit Arrows (arrow_long triggers) · L/S baseline signals · ◆ signal diamond · B/S paper fills · start</span></div>
-    <div id="cc"></div></div>
   <div class="two">
     <div class="card"><div class="h">Trade log <small id="tlN"></small></div><div class="scroll"><table id="tl"><thead><tr><th>Exit WIB</th><th>Coin</th><th>Entry → Exit</th><th>Bars<div class="mut" style="font-size:10px">exit</div></th><th>$ P&amp;L</th><th>%</th><th>Fees</th></tr></thead><tbody></tbody></table></div><div class="mut" id="tlE" style="font-size:12px;margin-top:6px"></div></div>
     <div class="card"><div class="h">Live event feed <small>signals · fills · errors</small></div><div class="scroll" id="evs"></div></div>
@@ -154,16 +160,27 @@ const cls = v => v>0 ? "pos" : v<0 ? "neg" : "";
 const dur = s => s==null ? "–" : s<90 ? Math.round(s)+"s" : s<5400 ? Math.round(s/60)+"m" : s<172800 ? (s/3600).toFixed(1)+"h" : (s/86400).toFixed(1)+"d";
 const stb = (c, n, fresh) => { const k = c>0?"bull":c<0?"bear":"neu"; return `<span class="badge ${k}">${c>0?"Bull":c<0?"Bear":"Neutral"}${n!=null?" "+n:""}</span>${fresh?' <span class="badge fl">●</span>':""}`; };
 const wibT = ms => Math.floor(ms/1000) + 7*3600;
-let ST = null, LIVE = null, BOT = null, lastBar = null, sel = localStorage.getItem("bot_coin") || "ZEC", chartBar = null;
+let ST = null, LIVE = null, BOT = null, lastBar = null, sel = localStorage.getItem("bot_coin") || new URLSearchParams(location.search).get("coin") || "ZEC", chartBar = null;
+if (sel) sel = String(sel).toUpperCase();
 const copt = el => ({width:el.clientWidth,height:el.clientHeight,layout:{background:{color:"#141923"},textColor:"#8a93a6",fontSize:11},grid:{vertLines:{color:"#1e2533"},horzLines:{color:"#1e2533"}},rightPriceScale:{borderColor:"#262e3f"},timeScale:{borderColor:"#262e3f",timeVisible:true,secondsVisible:false},crosshair:{mode:0},handleScroll:{vertTouchDrag:false}});
 const eqChart = LightweightCharts.createChart($("eqc"), Object.assign(copt($("eqc")),{localization:{priceFormatter:v=>"$"+v.toFixed(2)}}));
 const eqBh = eqChart.addLineSeries({color:"#8a93a6",lineWidth:1,lineStyle:2,priceLineVisible:false});
 const eqS = eqChart.addLineSeries({color:"#22c55e",lineWidth:2,priceLineVisible:false});
-const cChart = LightweightCharts.createChart($("cc"), copt($("cc")));
+const cChart = LightweightCharts.createChart($("cc"), Object.assign(copt($("cc")),{timeScale:{borderColor:"#262e3f",timeVisible:false,secondsVisible:false,visible:false}}));
+const rsiChart = LightweightCharts.createChart($("rsi"), copt($("rsi")));
 const sC = cChart.addCandlestickSeries({upColor:"#22c55e",downColor:"#ef4444",borderVisible:false,wickUpColor:"#22c55e",wickDownColor:"#ef4444"});
 const ln = (c, w, st) => cChart.addLineSeries({color:c,lineWidth:w,lineStyle:st||0,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false});
+const rsiScale = () => ({priceRange:{minValue:0,maxValue:100}});
+const sRsiOs = rsiChart.addAreaSeries({topColor:"rgba(34,197,94,0.20)",bottomColor:"rgba(34,197,94,0.04)",lineColor:"rgba(34,197,94,0)",lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,autoscaleInfoProvider:rsiScale});
+const sRsiOb = rsiChart.addBaselineSeries({baseValue:{type:"price",price:65},topFillColor1:"rgba(239,68,68,0.20)",topFillColor2:"rgba(239,68,68,0.05)",topLineColor:"rgba(239,68,68,0)",bottomFillColor1:"rgba(0,0,0,0)",bottomFillColor2:"rgba(0,0,0,0)",bottomLineColor:"rgba(0,0,0,0)",lineWidth:1,lineVisible:false,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,autoscaleInfoProvider:rsiScale});
+const sRsi = rsiChart.addLineSeries({color:"#f59e0b",lineWidth:2,priceLineVisible:false,lastValueVisible:true,title:"RSI",priceFormat:{type:"price",precision:1,minMove:0.1},autoscaleInfoProvider:rsiScale});
+sRsi.createPriceLine({price:35,color:"#22c55e",lineWidth:1,lineStyle:2,axisLabelVisible:true,title:"35"});
+sRsi.createPriceLine({price:65,color:"#ef4444",lineWidth:1,lineStyle:2,axisLabelVisible:true,title:"65"});
+let syncingRange = false;
+cChart.timeScale().subscribeVisibleLogicalRangeChange(r => { if (syncingRange || !r) return; syncingRange = true; try { rsiChart.timeScale().setVisibleLogicalRange(r); } finally { syncingRange = false; } });
+rsiChart.timeScale().subscribeVisibleLogicalRangeChange(r => { if (syncingRange || !r) return; syncingRange = true; try { cChart.timeScale().setVisibleLogicalRange(r); } finally { syncingRange = false; } });
 const sU = ln("#64748b",1), sL = ln("#64748b",1), sB = ln("#3b82f6",2), sX = ln("#a78bfa",1,2), s1 = ln("#f472b6",1), s2 = ln("#facc15",1,1), sAU = ln("#475569",1,2), sAL = ln("#475569",1,2);
-new ResizeObserver(()=>{eqChart.applyOptions({width:$("eqc").clientWidth});cChart.applyOptions({width:$("cc").clientWidth});}).observe(document.body);
+new ResizeObserver(()=>{eqChart.applyOptions({width:$("eqc").clientWidth});cChart.applyOptions({width:$("cc").clientWidth});rsiChart.applyOptions({width:$("rsi").clientWidth});}).observe(document.body);
 
 async function J(u){ const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 6000); let r; try { r = await fetch(u,{cache:"no-store",signal:ctl.signal}); } finally { clearTimeout(to); } if(!r.ok) throw new Error(u+" "+r.status); return r.json(); }
 
@@ -341,19 +358,48 @@ async function chart(force){
   sC.setData(d.t.map((_,i)=>({time:T[i],open:d.o[i],high:d.h[i],low:d.l[i],close:d.c[i]})));
   sB.setData(L(d.base)); sU.setData(L(d.upper)); sL.setData(L(d.lower)); sX.setData(L(d.exit));
   s1.setData(L(d.ssl1||[])); s2.setData(L(d.ssl2||[])); sAU.setData(L(d.atr_up||[])); sAL.setData(L(d.atr_lo||[]));
+  const rsiPts = L(d.rsi||[]);
+  sRsiOs.setData(T.map(t=>({time:t,value:35})));
+  sRsiOb.setData(T.map(t=>({time:t,value:100})));
+  sRsi.setData(rsiPts);
+  const snap = ms => { if (ms==null) return null; let prev=null; for (const t of d.t){ if (t===ms) return t; if (t>ms) return prev!=null?prev:t; prev=t; } return prev; };
+  const hang = ms => { const t = snap(ms); return t!=null ? wibT(t) : null; };
   const mk = [];
-  (d.AU||[]).forEach(t=>mk.push({time:wibT(t),position:"belowBar",color:"#00c3ff",shape:"arrowUp",text:"▲"}));
-  (d.AD||[]).forEach(t=>mk.push({time:wibT(t),position:"aboveBar",color:"#ff0062",shape:"arrowDown",text:"▼"}));
+  (d.AU||[]).forEach(t=>mk.push({time:wibT(t),position:"belowBar",color:"#00c3ff",shape:"arrowUp",size:0.7}));
+  (d.AD||[]).forEach(t=>mk.push({time:wibT(t),position:"aboveBar",color:"#ff0062",shape:"arrowDown",size:0.7}));
   (d.D||[]).forEach(t=>mk.push({time:wibT(t),position:"aboveBar",color:"#ffffff",shape:"circle",size:0.5,text:"◆"}));
-  d.L.forEach(t=>mk.push({time:wibT(t),position:"belowBar",color:"#22c55e",shape:"circle",size:0.5,text:"L"}));
-  d.S.forEach(t=>mk.push({time:wibT(t),position:"aboveBar",color:"#ef4444",shape:"circle",size:0.5,text:"S"}));
-  (d.fills||[]).forEach(f=>{ if (f.t>=d.t[0]) mk.push({time:wibT(f.t),position:(f.side==="BUY"||f.side==="COVER")?"belowBar":"aboveBar",color:"#f59e0b",shape:"square",text:{BUY:"B"+(f.reason==="ARROW_INTRABAR"?"·live":""),SELL:"S "+sgn(f.pnl)+(f.reason&&f.reason!=="ARROW"?" "+f.reason.replace("ARROW_INTRABAR","live"):""),SHORT:"SH",COVER:"C "+sgn(f.pnl)}[f.side]||f.side}); });
+  (window.__trades||[]).forEach(tr => {
+    if (tr.coin !== sel) return;
+    const side = String(tr.side||"long").toLowerCase();
+    const et = hang(tr.entry_t); const xt = hang(tr.exit_t);
+    if (et) mk.push({time:et,position:side==="short"?"aboveBar":"belowBar",color:side==="short"?"#ef4444":"#22c55e",shape:side==="short"?"arrowDown":"arrowUp",text:side==="short"?"SHORT":"LONG"});
+    if (xt) mk.push({time:xt,position:"aboveBar",color:(tr.pnl!=null && tr.pnl<0)?"#ef4444":"#e2e8f0",shape:"square",text:"EXIT"+(tr.pnl!=null?" "+sgn(tr.pnl):"")});
+  });
+  const cp0 = (ST.coins.find(x=>x.coin===sel)||{}).pos;
+  if (cp0 && cp0.entry_t) {
+    const et = hang(cp0.entry_t);
+    const side = String(cp0.side||"long").toLowerCase();
+    if (et && !(window.__trades||[]).some(tr => tr.coin===sel && tr.entry_t===cp0.entry_t))
+      mk.push({time:et,position:side==="short"?"aboveBar":"belowBar",color:side==="short"?"#ef4444":"#22c55e",shape:side==="short"?"arrowDown":"arrowUp",text:side==="short"?"SHORT":"LONG"});
+  }
+  const skips = (ST.pool && ST.pool.skipped) || ST.skipped_entries || [];
+  skips.forEach(k => { if (k.coin!==sel || k.reason!=="rsi_filter") return; const tm=hang(k.sig_t||k.ms); if(!tm) return; const up=k.side!=="short"; mk.push({time:tm,position:up?"belowBar":"aboveBar",color:"rgba(148,163,184,0.55)",shape:up?"arrowUp":"arrowDown",size:0.7,text:k.rsi!=null?"RSI "+Number(k.rsi).toFixed(0):"RSI"}); });
   const st = Math.floor(ST.first_fill_ms/BAR)*BAR; if (st>=d.t[0]) mk.push({time:wibT(st),position:"aboveBar",color:"#3b82f6",shape:"circle",text:"start"});
   mk.sort((x,y)=>x.time-y.time); sC.setMarkers(mk);
   (window.__pl||[]).forEach(l=>{ try { sC.removePriceLine(l); } catch(e){} }); window.__pl = [];
   const cp = (ST.coins.find(x=>x.coin===sel)||{}).pos;
-  if (cp) { [[cp.entry_px,"#fde047","entry"],[cp.tp_px,"#22c55e","TP +$"+(cp.tp_usd||"")],[cp.sl_px,"#ef4444","SL −$"+(cp.sl_usd||"")]].forEach(([p,c,t])=>{ if (p) window.__pl.push(sC.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:2,axisLabelVisible:true,title:t})); }); }
-  cChart.timeScale().setVisibleLogicalRange({from:Math.max(0,d.t.length-130),to:d.t.length+3});
+  if (cp) { [[cp.entry_px,"#fde047",(cp.side==="short"?"SHORT ":"LONG ")+"entry"],[cp.tp_px,"#22c55e","TP +$"+(cp.tp_usd||"")],[cp.sl_px,"#ef4444","SL −$"+(cp.sl_usd||"")]].forEach(([p,c,t])=>{ if (p) window.__pl.push(sC.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:2,axisLabelVisible:true,title:t})); }); }
+  const lastRsi = (d.rsi||[]).filter(v=>v!=null&&isFinite(v)).pop();
+  const liveR = ((((ST.coins.find(x=>x.coin===sel)||{}).ind)||{}).live||{}).rsi ?? (((ST.coins.find(x=>x.coin===sel)||{}).ind)||{}).rsi ?? lastRsi;
+  const rsiEl=$("rsiVal"), rsiNow=$("rsiNow");
+  const rtxt = (liveR!=null && isFinite(liveR)) ? Number(liveR).toFixed(1) : "–";
+  const rcls = (liveR!=null && isFinite(liveR)) ? (liveR<35?"pos":liveR>65?"neg":"") : "";
+  if (rsiEl){ rsiEl.textContent=rtxt; rsiEl.className=rcls; }
+  if (rsiNow){ rsiNow.textContent = rtxt!=="–" ? "RSI "+rtxt : ""; rsiNow.className="rbRsiNow "+rcls; }
+  const vis = window.innerWidth<760 ? 70 : 130;
+  const range = {from:Math.max(0,d.t.length-vis),to:d.t.length+3};
+  cChart.timeScale().setVisibleLogicalRange(range);
+  rsiChart.timeScale().setVisibleLogicalRange(range);
 }
 function selector(){
   if (!ST.coins_traded.includes(sel)) { const h = ST.coins.find(c=>c.pos); sel = h ? h.coin : ST.coins_traded[0]; }
@@ -432,7 +478,7 @@ async function poll(){
     if (!$("cSel").children.length) selector();
     const nb = ST.last_bar_t !== lastBar; lastBar = ST.last_bar_t;
     const [tr, ev] = await Promise.all([J("/api/trades"), J("/api/events?n=150")]);
-    tradeLog(tr); events(ev); await equity(); await chart(nb || (ST.pool && JSON.stringify(ST.pool.slots) !== window.__ps)); window.__ps = ST.pool && JSON.stringify(ST.pool.slots);
+    window.__trades = tr || []; tradeLog(tr); events(ev); await equity(); await chart(nb || (ST.pool && JSON.stringify(ST.pool.slots) !== window.__ps)); window.__ps = ST.pool && JSON.stringify(ST.pool.slots);
     $("sUpd").textContent = WIBS.format(new Date());
   } catch (e) {
     OFF = true; document.body.classList.add("isOff");

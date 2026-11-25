@@ -22,9 +22,10 @@ window.RB = (function () {
   const T = ms => Math.floor(ms / 1000) + 7 * 3600;   // charts render UTC; shift so the axis reads WIB
   const prec = p => !num(p) ? 2 : p < 0.001 ? 10 : p < 1 ? 5 : p < 100 ? 3 : 2;
   const onBot = () => document.body.classList.contains("onBot");
-  let D = null, V = null, coin = localStorage.getItem("rbCoin") || null, fCoin = "ALL", fRes = "all", eqC, eqS, bhS, pxC, pxS = {}, lastFetch = 0, loading = false;
+  let D = null, V = null, coin = localStorage.getItem("rbCoin") || new URLSearchParams(location.search).get("coin"), fCoin = "ALL", fRes = "all", eqC, eqS, bhS, pxC, rsiC, pxS = {}, rsiS = {}, lastFetch = 0, loading = false, syncingRange = false;
+  if (coin) coin = String(coin).toUpperCase();
   let LP = {}, lpT = 0, lpSrc = "", lpIdx = 0, lpBusy = false, lpErr = "", pend = {}, pendT = 0;
-  const TOG = JSON.parse(localStorage.getItem("rbTogs") || '{"chan":true,"base":true,"exit":true,"ssl1":false,"ssl2":false,"arrows":true,"fills":true}');
+  const TOG = Object.assign({chan:true,base:true,exit:true,ssl1:false,ssl2:false,arrows:true,fills:true,skips:true}, JSON.parse(localStorage.getItem("rbTogs") || "{}"));
   const chartOpt = () => ({ autoSize: true, layout: { background: { color: "#141923" }, textColor: "#8a93a6", fontSize: 11 }, grid: { vertLines: { color: "#1e2533" }, horzLines: { color: "#1e2533" } }, rightPriceScale: { borderColor: "#262e3f" }, timeScale: { borderColor: "#262e3f", timeVisible: true, secondsVisible: false }, crosshair: { mode: 0 }, handleScroll: { vertTouchDrag: false } });
 
   // ---------- data ----------
@@ -148,7 +149,7 @@ window.RB = (function () {
     if (onBot()) { $("upd").textContent = "Real bot · exported " + wib(D.exported_ms) + " WIB"; $("src").textContent = V && V.live ? "· live P&L" : ""; }
     liveBadge();
   }
-  function render() { header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) coin = D.coins[0] && D.coins[0].coin; coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
+  function render() { header(); numbers(); equity(); cards(); poolCard(); if (!coin || !D.coins.some(c => c.coin === coin)) { const held = (D.open || []).find(o => o && o.coin) || D.coins.find(c => c.pos === "long" || c.pos === "short"); coin = (held && held.coin) || (D.coins[0] && D.coins[0].coin); } coinChart(false); positions(); filters(); trades(); events(); rules(); pendBanner(); }
 
   function numbers() {
     $("rbBal").textContent = usd(V.balance); $("rbBal").classList.remove("flash"); void $("rbBal").offsetWidth; if (V.live) $("rbBal").classList.add("flash");
@@ -199,15 +200,51 @@ window.RB = (function () {
   }
 
   function togs() {
-    const L = [["chan", "Channel"], ["base", "Baseline"], ["exit", "Exit line"], ["ssl1", "SSL1"], ["ssl2", "SSL2"], ["arrows", "Arrows"], ["fills", "B/S fills"]];
+    const L = [["chan", "Channel"], ["base", "Baseline"], ["exit", "Exit line"], ["ssl1", "SSL1"], ["ssl2", "SSL2"], ["arrows", "Arrows"], ["fills", "Trades"], ["skips", "RSI skips"]];
     $("rbTogs").innerHTML = L.map(([k, l]) => `<label><input type="checkbox" data-k="${k}" ${TOG[k] ? "checked" : ""}>${l}</label>`).join("");
     $("rbTogs").querySelectorAll("input").forEach(i => i.onchange = () => { TOG[i.dataset.k] = i.checked; localStorage.setItem("rbTogs", JSON.stringify(TOG)); coinChart(false); });
   }
-  let livePL = null;
+
+  let livePL = null, liveRsiPL = null;
+  function snapBar(times, ms) {
+    if (!times || !times.length || !num(ms)) return null;
+    let prev = null;
+    for (let i = 0; i < times.length; i++) {
+      const t = times[i];
+      if (t === ms) return t;
+      if (t > ms) return prev != null ? prev : t;
+      prev = t;
+    }
+    return prev;
+  }
+  function setRsiLabel(v) {
+    const txt = num(v) ? v.toFixed(1) : "–";
+    const k = num(v) ? (v < 35 ? "pos" : v > 65 ? "neg" : "") : "";
+    const el = $("rbRsiVal"), now = $("rbRsiNow");
+    if (el) { el.textContent = txt; el.className = k; }
+    if (now) { now.textContent = num(v) ? "RSI " + txt : ""; now.className = "rbRsiNow " + k; }
+  }
   function livePriceLine() {
     const c = V && V.coins.find(x => x.coin === coin); if (!pxS.c || !c || !c.live) return;
     if (livePL) { try { pxS.c.removePriceLine(livePL); } catch (e) {} }
     livePL = pxS.c.createPriceLine({ price: c.price, color: "#93c5fd", lineWidth: 1, lineStyle: 1, axisLabelVisible: true, title: "live" });
+    if (rsiS.rsi && num(c.rsi)) {
+      if (liveRsiPL) { try { rsiS.rsi.removePriceLine(liveRsiPL); } catch (e) {} }
+      liveRsiPL = rsiS.rsi.createPriceLine({ price: c.rsi, color: "#f59e0b", lineWidth: 1, lineStyle: 0, axisLabelVisible: true, title: "RSI" });
+      setRsiLabel(c.rsi);
+    }
+  }
+  function bindChartSync() {
+    if (!pxC || !rsiC || pxC._synced) return;
+    pxC._synced = true;
+    pxC.timeScale().subscribeVisibleLogicalRangeChange(r => {
+      if (syncingRange || !r || !rsiC) return;
+      syncingRange = true; try { rsiC.timeScale().setVisibleLogicalRange(r); } finally { syncingRange = false; }
+    });
+    rsiC.timeScale().subscribeVisibleLogicalRangeChange(r => {
+      if (syncingRange || !r || !pxC) return;
+      syncingRange = true; try { pxC.timeScale().setVisibleLogicalRange(r); } finally { syncingRange = false; }
+    });
   }
   function coinChart(scroll) {
     const c = D.coins.find(x => x.coin === coin); if (!c) return;
@@ -216,9 +253,14 @@ window.RB = (function () {
     if (!$("rbTogs").childElementCount) togs();
     $("rbPxT").textContent = `${c.coin}/USDT · ${D.tf}`;
     const ch = c.chart;
-    if (!pxC) pxC = LightweightCharts.createChart($("rbPx"), chartOpt());
+    const pxOpt = Object.assign(chartOpt(), { timeScale: { borderColor: "#262e3f", timeVisible: false, secondsVisible: false, visible: false } });
+    const rsiOpt = Object.assign(chartOpt(), { timeScale: { borderColor: "#262e3f", timeVisible: true, secondsVisible: false, visible: true } });
+    if (!pxC && $("rbPx")) pxC = LightweightCharts.createChart($("rbPx"), pxOpt);
+    if (!rsiC && $("rbRsi")) rsiC = LightweightCharts.createChart($("rbRsi"), rsiOpt);
+    bindChartSync();
     Object.values(pxS).forEach(s => { try { pxC.removeSeries(s); } catch (e) {} }); pxS = {}; livePL = null;
-    if (!ch || !ch.t || !ch.t.length) { $("rbPxNote").textContent = "No chart data for this coin yet."; return; }
+    Object.values(rsiS).forEach(s => { try { rsiC.removeSeries(s); } catch (e) {} }); rsiS = {}; liveRsiPL = null;
+    if (!ch || !ch.t || !ch.t.length) { $("rbPxNote").textContent = "No chart data for this coin yet."; setRsiLabel(c.rsi); return; }
     const pf = { type: "price", precision: prec(c.price), minMove: Math.pow(10, -prec(c.price)) };
     const line = (k, color, w, style) => { const s = pxC.addLineSeries({ color, lineWidth: w, lineStyle: style || 0, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, priceFormat: pf });
       s.setData(ch.t.map((t, i) => num(ch[k][i]) ? { time: T(t), value: ch[k][i] } : { time: T(t) })); pxS[k] = s; };
@@ -230,19 +272,58 @@ window.RB = (function () {
     const cs = pxC.addCandlestickSeries({ upColor: "#22c55e", downColor: "#ef4444", borderVisible: false, wickUpColor: "#22c55e", wickDownColor: "#ef4444", priceFormat: pf, priceLineVisible: false });
     cs.setData(ch.t.map((t, i) => ({ time: T(t), open: ch.o[i], high: ch.h[i], low: ch.l[i], close: ch.c[i] }))); pxS.c = cs;
     const tset = new Set(ch.t), m = [];
-    if (TOG.arrows) { (ch.au || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "belowBar", color: "#22c55e", shape: "arrowUp", size: 1 }));
-      (ch.ad || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "aboveBar", color: "#ef4444", shape: "arrowDown", size: 1 })); }
-    if (TOG.fills) (ch.fills || []).forEach(f => { const t = tset.has(f.t) ? f.t : ch.t.find(x => x >= f.t); if (t != null) m.push({ time: T(t), position: f.side === "BUY" ? "belowBar" : "aboveBar", color: "#fde047", shape: f.side === "BUY" ? "arrowUp" : "arrowDown", text: f.side === "BUY" ? "B" : "S" + (num(f.pnl) ? " " + usd(f.pnl, 1) : "") }); });
-    m.sort((a, b) => a.time - b.time); cs.setMarkers(m);
-    if (c.pos === "long" && num(c.entry)) cs.createPriceLine({ price: c.entry, color: "#fde047", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "entry" });
-    if (c.pos === "long" && num(c.tp_px)) cs.createPriceLine({ price: c.tp_px, color: "#22c55e", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "TP +$" + (D.pool && D.pool.tp_usd) });
-    if (c.pos === "long" && num(c.sl_px)) cs.createPriceLine({ price: c.sl_px, color: "#ef4444", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "SL −$" + (D.pool && D.pool.sl_usd) });
-    const n = ch.t.length, vis = window.innerWidth < 760 ? 80 : 150;
-    if (n > vis) pxC.timeScale().setVisibleLogicalRange({ from: n - vis, to: n + 1 }); else pxC.timeScale().fitContent();
+    const hang = ms => { const t = tset.has(ms) ? ms : snapBar(ch.t, ms); return t != null ? T(t) : null; };
+    if (TOG.arrows) { (ch.au || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "belowBar", color: "#4ade80", shape: "arrowUp", size: 0.7 }));
+      (ch.ad || []).forEach(t => tset.has(t) && m.push({ time: T(t), position: "aboveBar", color: "#f87171", shape: "arrowDown", size: 0.7 })); }
+    if (TOG.skips !== false) (ch.skips || []).forEach(sk => {
+      const tm = hang(sk.t); if (tm == null) return;
+      const up = sk.side !== "short";
+      m.push({ time: tm, position: up ? "belowBar" : "aboveBar", color: "rgba(148,163,184,0.55)", shape: up ? "arrowUp" : "arrowDown", size: 0.7, text: num(sk.rsi) ? "RSI " + sk.rsi.toFixed(0) : "RSI" });
+    });
+    const marks = (ch.marks && ch.marks.length) ? ch.marks : [];
+    if (TOG.fills) {
+      marks.forEach(mk => {
+        const tm = hang(mk.t); if (tm == null) return;
+        if (mk.kind === "long") m.push({ time: tm, position: "belowBar", color: "#22c55e", shape: "arrowUp", text: "LONG" });
+        else if (mk.kind === "short") m.push({ time: tm, position: "aboveBar", color: "#ef4444", shape: "arrowDown", text: "SHORT" });
+        else if (mk.kind === "exit") m.push({ time: tm, position: "aboveBar", color: num(mk.pnl) && mk.pnl < 0 ? "#ef4444" : "#e2e8f0", shape: "square", text: "EXIT" + (num(mk.pnl) ? " " + usd(mk.pnl, 1) : "") });
+      });
+      if (!marks.length && (ch.fills || []).length) (ch.fills || []).forEach(f => {
+        const tm = hang(f.t); if (tm == null) return;
+        if (f.side === "BUY") m.push({ time: tm, position: "belowBar", color: "#22c55e", shape: "arrowUp", text: "LONG" });
+        else if (f.side === "SHORT") m.push({ time: tm, position: "aboveBar", color: "#ef4444", shape: "arrowDown", text: "SHORT" });
+        else m.push({ time: tm, position: "aboveBar", color: num(f.pnl) && f.pnl < 0 ? "#ef4444" : "#e2e8f0", shape: "square", text: "EXIT" + (num(f.pnl) ? " " + usd(f.pnl, 1) : "") });
+      });
+    }
+    m.sort((a, b) => a.time - b.time || String(a.text || "").localeCompare(String(b.text || ""))); cs.setMarkers(m);
+    const heldC = c.pos === "long" || c.pos === "short";
+    if (heldC && num(c.entry)) cs.createPriceLine({ price: c.entry, color: "#fde047", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: (c.pos === "short" ? "SHORT " : "LONG ") + "entry" });
+    if (heldC && num(c.tp_px)) cs.createPriceLine({ price: c.tp_px, color: "#22c55e", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "TP +$" + (D.pool && D.pool.tp_usd) });
+    if (heldC && num(c.sl_px)) cs.createPriceLine({ price: c.sl_px, color: "#ef4444", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "SL −$" + (D.pool && D.pool.sl_usd) });
+    if (rsiC) {
+      const times = ch.t.map(T);
+      const rsiVals = (ch.rsi || []).map((v, i) => num(v) ? { time: times[i], value: v } : null).filter(Boolean);
+      const scale01 = () => ({ priceRange: { minValue: 0, maxValue: 100 } });
+      const os = rsiC.addAreaSeries({ topColor: "rgba(34,197,94,0.20)", bottomColor: "rgba(34,197,94,0.04)", lineColor: "rgba(34,197,94,0)", lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, autoscaleInfoProvider: scale01 });
+      os.setData(times.map(t => ({ time: t, value: 35 }))); rsiS.os = os;
+      const ob = rsiC.addBaselineSeries({ baseValue: { type: "price", price: 65 }, topFillColor1: "rgba(239,68,68,0.20)", topFillColor2: "rgba(239,68,68,0.05)", topLineColor: "rgba(239,68,68,0)", bottomFillColor1: "rgba(0,0,0,0)", bottomFillColor2: "rgba(0,0,0,0)", bottomLineColor: "rgba(0,0,0,0)", lineWidth: 1, lineVisible: false, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false, autoscaleInfoProvider: scale01 });
+      ob.setData(times.map(t => ({ time: t, value: 100 }))); rsiS.ob = ob;
+      const rs = rsiC.addLineSeries({ color: "#f59e0b", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "RSI", priceFormat: { type: "price", precision: 1, minMove: 0.1 }, autoscaleInfoProvider: scale01 });
+      rs.setData(rsiVals); rsiS.rsi = rs;
+      rs.createPriceLine({ price: 35, color: "#22c55e", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "35" });
+      rs.createPriceLine({ price: 65, color: "#ef4444", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "65" });
+    }
+    const lastRsi = (ch.rsi || []).filter(num).pop();
+    setRsiLabel(num(c.rsi) ? c.rsi : lastRsi);
+    const n = ch.t.length, vis = window.innerWidth < 760 ? 70 : 150;
+    const range = n > vis ? { from: n - vis, to: n + 1 } : null;
+    if (range) { pxC.timeScale().setVisibleLogicalRange(range); if (rsiC) rsiC.timeScale().setVisibleLogicalRange(range); }
+    else { pxC.timeScale().fitContent(); if (rsiC) rsiC.timeScale().fitContent(); }
     livePriceLine(); cinfo();
-    $("rbPxNote").textContent = `Last ${n} closed ${D.tf} bars up to the bar opened ${wib(ch.t[n - 1])} WIB, from the bot's own indicator output (the dotted blue "live" line is the current price). Drag or pinch to scroll back/zoom.`;
+    $("rbPxNote").textContent = `Last ${n} closed ${D.tf} bars up to the bar opened ${wib(ch.t[n - 1])} WIB, from the bot's own indicator output (the dotted blue "live" line is the current price). Green ▲ LONG / red ▼ SHORT mark paper entries; × EXIT shows the close and P&L. Faint arrows are Exit Arrows skipped by the RSI filter. Drag or pinch to scroll back/zoom.`;
     if (scroll) $("rbChartCard").scrollIntoView({ behavior: "smooth", block: "start" });
   }
+
   function cinfo() {
     const c = V && V.coins.find(x => x.coin === coin); if (!c) return;
     const I = [["Position", c.pos === "long" ? "LONG" : "CASH"], ["Price" + (c.live ? " · live" : ""), px(c.price)], ["Entry", c.pos === "long" ? px(c.entry) : "–"], ["Unrealised", c.pos === "long" ? usd(c.unreal, 1) + " · " + pct(c.unreal_pct) : "–"],

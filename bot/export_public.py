@@ -25,17 +25,73 @@ def downsample(rows, n):
     step = (len(rows) - 1) / (n - 1)
     return [rows[i] for i in sorted({round(i * step) for i in range(n)})]
 
-def chart(coin, fills):
+def _side_of(x, default="long"):
+    s = str((x or {}).get("side") or default).lower()
+    return "short" if s in ("short", "s", "sell") else "long"
+
+def _snap_t(times, ms):
+    """Last bar open at or before ms (so an intrabar fill still hangs on a visible candle)."""
+    if not times or ms is None: return None
+    prev = None
+    for t in times:
+        if t == ms: return t
+        if t > ms: return prev if prev is not None else t
+        prev = t
+    return prev
+
+def chart(coin, fills, trades=(), opens=(), skips=()):
     d = jl(f"data/chart_{coin}.json", None)
     if not d or not d.get("t"): return None
-    n = len(d["t"]); a = max(0, n - BARS); t0 = d["t"][a]
+    n = len(d["t"]); a = max(0, n - BARS); t0 = d["t"][a]; ts = d["t"][a:]
     def sl(k, f=rp): return [f(v) if v is not None else None for v in (d.get(k) or [None] * n)[a:]]
     def ev(k): return [x for x in (d.get(k) or []) if x >= t0]
-    return {"t": d["t"][a:], "o": sl("o"), "h": sl("h"), "l": sl("l"), "c": sl("c"),
+    marks, seen = [], set()
+    def add_mark(ms, kind, px=None, pnl=None, reason=None, side=None):
+        t = _snap_t(ts, ms)
+        if t is None: return
+        key = (kind, t, side)
+        if key in seen: return
+        seen.add(key)
+        row = {"t": t, "ms": int(ms), "kind": kind}
+        if px is not None: row["px"] = rp(px)
+        if pnl is not None: row["pnl"] = r(pnl, 2)
+        if reason: row["reason"] = reason
+        if side: row["side"] = side
+        marks.append(row)
+    for t in trades:
+        if t.get("coin") != coin: continue
+        side = _side_of(t)
+        if t.get("entry_t"): add_mark(t.get("entry_t"), side, t.get("entry_px"), side=side)
+        if t.get("exit_t"): add_mark(t.get("exit_t"), "exit", t.get("exit_px"), t.get("pnl"), t.get("exit_reason") or t.get("reason") or "ARROW", side)
+    for o in opens:
+        if o.get("coin") != coin: continue
+        side = _side_of(o)
+        et = o.get("entry_ms") or o.get("entry_t")
+        if et: add_mark(et, side, o.get("entry") if o.get("entry") is not None else o.get("entry_px"), side=side)
+    for f in fills or []:
+        if f.get("t", 0) < t0: continue
+        sd = f.get("side")
+        if sd in ("BUY", "SHORT"):
+            side = "short" if sd == "SHORT" else "long"
+            add_mark(f["t"], side, f.get("px"), side=side)
+        elif sd in ("SELL", "COVER"):
+            add_mark(f["t"], "exit", f.get("px"), f.get("pnl"), f.get("reason") or f.get("why"), "short" if sd == "COVER" else "long")
+    skip_rows = []
+    for k in skips:
+        if k.get("coin") != coin: continue
+        why = k.get("reason") or ""
+        if why != "rsi_filter": continue
+        ms = k.get("sig_t") if k.get("sig_t") is not None else k.get("ms")
+        t = _snap_t(ts, ms)
+        if t is None: continue
+        skip_rows.append({"t": t, "ms": int(ms) if ms else t, "side": _side_of(k), "rsi": r(k.get("rsi"), 2), "reason": "rsi_filter"})
+    return {"t": ts, "o": sl("o"), "h": sl("h"), "l": sl("l"), "c": sl("c"),
             "base": sl("base"), "upper": sl("upper"), "lower": sl("lower"), "ssl1": sl("ssl1"), "ssl2": sl("ssl2"), "exit": sl("exit"),
+            "rsi": sl("rsi", lambda v: r(v, 2)),
             "au": ev("AU"), "ad": ev("AD"), "L": ev("L"), "S": ev("S"),
             "fills": [{"t": f["t"], "side": f["side"], "px": rp(f["px"]), "why": f.get("why"), "tf": f.get("tf"), "pnl": r(f.get("pnl"), 2), "reason": f.get("reason")}
-                      for f in fills if f.get("t", 0) >= t0]}
+                      for f in (fills or []) if f.get("t", 0) >= t0],
+            "marks": marks, "skips": skip_rows}
 
 def pool_view(ST):
     p = ST.get("pool")
@@ -66,6 +122,16 @@ def build():
     S = jl("summary.json", {}) or {}; L = jl("live.json", {}) or {}; ST = jl("state.json", {}) or {}
     cfg = jl("config.json", {}) or {}
     stc = {c["coin"]: c for c in ST.get("coins", [])}
+    trades_raw = jsonl("trades.jsonl")
+    opens_raw = list(S.get("open_positions") or [])
+    for c0 in ST.get("coins") or []:
+        if c0.get("pos"):
+            p = dict(c0["pos"]); p["coin"] = c0["coin"]
+            if not any(o.get("coin") == p["coin"] for o in opens_raw):
+                opens_raw.append(p)
+    skips_raw = list((ST.get("pool") or {}).get("skipped") or ST.get("skipped_entries") or [])
+    if not skips_raw:
+        skips_raw = [k for k in jsonl("skips.jsonl") if k.get("reason") == "rsi_filter"][-80:]
     coins = []
     for c in B["coins"]:
         s = stc.get(c["coin"], {}); ind = s.get("ind") or {}; pos = s.get("pos")
@@ -89,7 +155,7 @@ def build():
                  in_universe=s.get("in_universe"), tradable=s.get("tradable"), entry_reason=pos.get("entry_reason") if pos else None,
                  live_arrow=(ind.get("live") or {}).get("arrow"), live_exit_line=rp((ind.get("live") or {}).get("exit_line")), live_rsi=r((ind.get("live") or {}).get("rsi"), 2),
                  last_signal=ind.get("last_signal"), bars_since_signal=ind.get("bars_since_signal"),
-                 chart=chart(c["coin"], s.get("fills") or []))
+                 chart=chart(c["coin"], s.get("fills") or [], trades_raw, opens_raw, skips_raw))
         coins.append(c)
     tr = jsonl("trades.jsonl"); tr.sort(key=lambda t: t.get("exit_t", 0))
     trades = [{"coin": t["coin"], "side": t.get("side"), "in_ms": t.get("entry_t"), "out_ms": t.get("exit_t"),

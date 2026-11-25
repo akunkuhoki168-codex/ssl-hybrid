@@ -1,27 +1,53 @@
-  <section id="vBot" class="hide">
-    <div class="card">
+  <section id="vBot">
+    <div class="card" id="rbHeadCard">
       <div class="rbtop"><span class="pill stp" id="rbPill"><i></i><span id="rbPillT">LOADING</span></span><span class="pill stale hide" id="rbStalePill">STALE</span><span class="meta" id="rbMode"></span></div>
       <div class="rbdet" id="rbDetail"></div>
       <div class="meta" id="rbRsiLine" style="margin-top:4px;font-weight:600"></div>
       <div class="rbstale hide" id="rbStale"></div>
-      <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
-      <div class="meta" style="margin-top:6px">The timeframe and pause/resume are changed by messaging the bot in chat (this public page is read-only).</div>
-      <div id="rbErr" class="err"></div>
-    </div>
-    <div class="card">
       <div class="livebar"><span class="live" id="rbLive"><i></i><span id="rbLiveT">CONNECTING</span></span><span class="meta" id="rbLiveAt">connecting to Binance…</span></div>
       <div class="phead"><div><div class="meta">Paper balance · live mark</div><div class="big" id="rbBal">–</div><div id="rbPnl" class="meta"></div></div>
       <div class="cd">Next <span id="rbTf">–</span> bar close<br><b id="rbCd">–</b><div id="rbCdAt"></div></div></div>
       <div class="kpis" id="rbKpis" style="margin-top:10px"></div><div class="meta" id="rbAsOf" style="margin-top:8px"></div>
     </div>
-    <div class="card"><div class="h3">Equity vs buy &amp; hold</div><div class="legend"><span><i class="dot" style="background:#22c55e"></i>Bot equity (USD)</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold same coins</span></div><div id="rbEq"></div></div>
-    <div class="rbpend hide" id="rbPend"></div>
-    <div class="card hide" id="rbPoolC"><div class="h3">Pool <span class="meta" id="rbPoolH"></span></div><div class="slots" id="rbSlots"></div><div class="meta" id="rbPoolN" style="margin-top:6px"></div><div class="h3" style="margin-top:10px;font-size:14px">Skipped arrows <span class="meta">· slots full, not queued</span></div><div id="rbSkip"></div></div>
-    <div class="card"><div class="h3">Coins <span class="meta">· live prices · positions as of <span class="asof">–</span> · tap a coin for its chart</span></div><div class="ccards" id="rbCards"></div></div>
-    <div class="card" id="rbChartCard"><div class="h3">Chart · <span id="rbPxT">–</span></div><div class="pseg cseg" id="rbPxSeg"></div>
+    <div class="card" id="rbChartCard"><div class="h3">Chart · <span id="rbPxT">–</span> <span class="rbRsiNow" id="rbRsiNow"></span></div><div class="pseg cseg" id="rbPxSeg"></div>
       <div class="togs" id="rbTogs"></div>
-      <div class="legend"><span><i class="dot" style="background:#3b82f6"></i>Baseline</span><span><i class="dot" style="background:#64748b"></i>Channel</span><span><i class="dot" style="background:#a78bfa"></i>Exit line</span><span><i class="dot" style="background:#f59e0b"></i>SSL1</span><span><i class="dot" style="background:#22d3ee"></i>SSL2</span><span><b class="pos">▲</b>/<b class="neg">▼</b> Exit Arrows · <b style="color:#fde047">B</b>/<b style="color:#fde047">S</b> the bot's paper fills</span></div>
-      <div id="rbPx"></div><div class="cinfo" id="rbCinfo"></div><div class="meta" id="rbPxNote" style="margin-top:6px"></div></div>
+      <div class="legend"><span><i class="dot" style="background:#3b82f6"></i>Baseline</span><span><i class="dot" style="background:#64748b"></i>Channel</span><span><i class="dot" style="background:#a78bfa"></i>Exit line</span><span><i class="dot" style="background:#f59e0b"></i>SSL1</span><span><i class="dot" style="background:#22d3ee"></i>SSL2</span><span><b class="pos">▲ LONG</b> / <b class="neg">▼ SHORT</b> entries · <b>×</b> EXIT (P&amp;L) · faint arrows = RSI-skipped · <b class="pos">▲</b>/<b class="neg">▼</b> Exit Arrows</span></div>
+      <div id="rbPx"></div>
+      <div class="rsihead"><span>RSI(14) · active timeframe · guides at 35 / 65</span><b id="rbRsiVal">–</b></div>
+      <div id="rbRsi"></div>
+      <div class="cinfo" id="rbCinfo"></div><div class="meta" id="rbPxNote" style="margin-top:6px"></div></div>
+    <div class="card">
+      <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
+      <div class="rb-ctl">
+        <div class="rb-tf" id="rbTfSeg">
+          <button type="button" data-tf="15m">15m</button>
+          <button type="button" data-tf="1h">1h</button>
+          <button type="button" data-tf="4h">4h</button>
+        </div>
+        <div class="meta" id="rbTfNote">Highlighted = the bot's active timeframe. Tap a button to switch (15m, 1h or 4h). It should confirm within a few seconds — no GitHub login or commit needed.</div>
+        <div class="rb-tf" id="rbFltSeg">
+          <button type="button" data-filter="off">Filter OFF</button>
+          <button type="button" data-filter="on">Filter ON +2%/24h</button>
+        </div>
+        <div class="meta" id="rbFltNote">Entry filter: when ON, a new long needs the coin up at least +2% over the last 24 hours (15m candles); a new short needs it down at least −2%. Tap to turn it on or off; it should confirm within a few seconds — no GitHub login needed. Existing positions and exits are unchanged.</div>
+        <div class="rb-tf" id="rbSidesSeg">
+          <button type="button" data-sides="long">Long-only</button>
+          <button type="button" data-sides="ls">Long+Short</button>
+        </div>
+        <div class="meta" id="rbSidesNote">Long+Short (1x paper): an up arrow closes a short and opens a long; a down arrow closes a long and opens a short. Switching to Long-only closes open shorts immediately. Tap to change mode; it should confirm within a few seconds — no GitHub login needed.</div>
+        <div class="rb-reset">
+          <label for="rbResetCap">Reset paper bot · starting balance (USD)</label>
+          <input id="rbResetCap" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="e.g. 1000" value="500">
+          <button type="button" id="rbResetBtn">Reset</button>
+        </div>
+        <div class="meta" id="rbResetNote">Archives the current paper run and starts a new one with this starting balance. Open positions are not carried over. Type the starting balance here, then tap Reset and confirm. It should confirm within a few seconds — no GitHub login needed.</div>
+      </div>
+      <div id="rbErr" class="err"></div>
+    </div>
+    <div class="card" style="text-align:center"><div class="h3">Equity vs buy &amp; hold</div><div class="legend" style="justify-content:center"><span><i class="dot" style="background:#22c55e"></i>Bot</span><span><i class="dot" style="background:#8a93a6"></i>Buy &amp; hold</span></div><div id="rbEq"></div></div>
+    <div class="rbpend hide" id="rbPend"></div>
+    <div class="card hide" id="rbPoolC"><div class="h3 pool-head" id="rbPoolHead" role="button" tabindex="0" aria-expanded="true" aria-controls="rbPoolBody"><span class="pool-chevron" id="rbPoolChev" aria-hidden="true">▾</span> Pool <span class="meta" id="rbPoolH"></span><span class="meta" id="rbPoolSum"></span></div><div id="rbPoolBody"><div class="slots" id="rbSlots"></div><div class="meta" id="rbPoolN" style="margin-top:6px"></div><div class="h3" style="margin-top:10px;font-size:14px">Skipped arrows <span class="meta">· slots full, not queued</span></div><div id="rbSkip"></div></div></div>
+    <div class="card"><div class="h3">Coins <span class="meta">· live prices · positions as of <span class="asof">–</span> · tap a coin for its chart</span></div><div class="ccards" id="rbCards"></div></div>
     <div class="card"><div class="h3">Open positions <span class="meta">· as of <span class="asof">–</span> WIB, P&amp;L live</span></div><div class="tblwrap"><table id="rbPos"><thead><tr><th>Coin<span class="sub">size</span></th><th>Entry<span class="sub">time WIB</span></th><th>Now<span class="sub">net if sold</span></th><th>TP<span class="sub">SL</span></th><th>Unreal. $<span class="sub">%</span></th></tr></thead><tbody></tbody></table></div><div class="meta" id="rbPosNote"></div></div>
     <div class="card"><div class="h3">Trade log</div>
       <div class="flt"><select id="rbFCoin" aria-label="Filter by coin"></select><div class="pseg" id="rbFRes"></div></div>

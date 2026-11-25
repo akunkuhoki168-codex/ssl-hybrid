@@ -295,6 +295,7 @@ def chart_payload(df, ind, res, bars=400):
             "base": r4(ind["base"][k:]), "upper": r4(ind["upper"][k:]), "lower": r4(ind["lower"][k:]), "exit": r4(ind["ex_line"][k:]),
             "L": [int(df.t.values[i]) for i in np.where(ind["long_sig"])[0] if i >= k], "S": [int(df.t.values[i]) for i in np.where(ind["short_sig"])[0] if i >= k],
             "ssl1": r4(ind["ssl1_line"][k:]), "ssl2": r4(ind["ssl2_line"][k:]), "atr_up": r4(ind["atr_up"][k:]), "atr_lo": r4(ind["atr_lo"][k:]),
+            "rsi": r4(ind["rsi"][k:]) if ind.get("rsi") is not None else [],
             "AU": [int(df.t.values[i]) for i in np.where(ind["arrow"] > 0)[0] if i >= k], "AD": [int(df.t.values[i]) for i in np.where(ind["arrow"] < 0)[0] if i >= k],
             "D": [int(df.t.values[i]) for i in np.where(ind["diamond"])[0] if i >= k],
             "fills": res["fills"] if res else []}
