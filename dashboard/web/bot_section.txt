@@ -7,7 +7,6 @@
       <div class="livebar"><span class="live" id="rbLive"><i></i><span id="rbLiveT">CONNECTING</span></span><span class="meta" id="rbLiveAt">connecting to Binance…</span></div>
       <div class="phead"><div><div class="meta">Paper balance · live mark</div><div class="big" id="rbBal">–</div><div id="rbPnl" class="meta"></div></div>
       <div class="cd">Next <span id="rbTf">–</span> bar close<br><b id="rbCd">–</b><div id="rbCdAt"></div></div></div>
-      <div class="kpis" id="rbKpis" style="margin-top:10px"></div><div class="meta" id="rbAsOf" style="margin-top:8px"></div>
     </div>
     <div class="card" id="rbChartCard"><div class="h3">Chart · <span id="rbPxT">–</span> <span class="rbRsiNow" id="rbRsiNow"></span></div><div class="pseg cseg" id="rbPxSeg"></div>
       <div class="togs" id="rbTogs"></div>
@@ -16,6 +15,7 @@
       <div class="rsihead"><span>RSI(14) · active timeframe · guides at 35 / 65</span><b id="rbRsiVal">–</b></div>
       <div id="rbRsi"></div>
       <div class="cinfo" id="rbCinfo"></div><div class="meta" id="rbPxNote" style="margin-top:6px"></div></div>
+    <div class="card"><div class="kpis" id="rbKpis"></div><div class="meta" id="rbAsOf" style="margin-top:8px"></div></div>
     <div class="card">
       <div class="rbinfo"><b>Data from the 24/7 paper bot, updated every 10 min.</b> Positions as of the export <b id="rbExp">–</b> WIB <span id="rbAgo"></span>; this page re-checks for a new export every 60 s. <b>P&amp;L is marked live</b> in your browser from Binance prices every 5 s. Paper trading only: no exchange keys, no real orders.</div>
       <div class="rb-ctl">
